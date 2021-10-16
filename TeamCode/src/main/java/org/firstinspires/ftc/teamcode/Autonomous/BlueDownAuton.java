@@ -18,26 +18,36 @@ public class BlueDownAuton extends LinearOpMode {
 
 //        SampleTankDrive drive = new SampleTankDrive(hardwareMap);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(-40.0, 62.0, Math.toRadians(-90.0));
+        Pose2d startPose = new Pose2d(-40.0, 60.0, Math.toRadians(-90.0));
         drive.setPoseEstimate(startPose);
 
-        Trajectory trajectory1 = drive.trajectoryBuilder(startPose)
-            .splineTo(new Vector2d(-60.0, 62.0), Math.toRadians(0.0))
+        Trajectory trajectory1 = drive.trajectoryBuilder(startPose.plus(new Pose2d(0.0, 0.0, Math.toRadians(90.0))))
+            .back(15.0)
             .build();
 
-        Trajectory trajectory2 = drive.trajectoryBuilder(trajectory1.end())
-            .splineTo(new Vector2d(-45.0, 35.0), Math.toRadians(0.0))
-            .forward(10)
-            .splineTo(new Vector2d(-20.0, 42.0), Math.toRadians(0.0))
+        Trajectory trajectory1point5 = drive.trajectoryBuilder(trajectory1.end(), true)
+            .lineTo(new Vector2d(-45.0, 35.0))
             .build();
 
-        Trajectory trajectory3 = drive.trajectoryBuilder(trajectory2.end())
-            .splineTo(new Vector2d(13.0, 41.0), Math.toRadians(0.0))
+        Trajectory trajectory2 = drive.trajectoryBuilder(trajectory1point5.end(),true)
+            //.splineTo(new Vector2d(-45.0, 35.0), Math.toRadians(0.0))
+//            .forward(10)
+//            .splineTo(new Vector2d(-20.0, 42.0), Math.toRadians(0.0))
+                .lineTo(new Vector2d(-20.0,42.0))
+            .build();
+
+        Trajectory trajectory3 = drive.trajectoryBuilder(trajectory2.end(),true)
+//            .splineTo(new Vector2d(13.0, 41.0), Math.toRadians(0.0))
+                .lineTo(new Vector2d(13.0,41.0))
             .build();
             
         waitForStart();
 
+        drive.turn(Math.toRadians(90.0));
+
         drive.followTrajectory(trajectory1);
+
+        drive.followTrajectory(trajectory1point5);
 
         drive.followTrajectory(trajectory2);
 

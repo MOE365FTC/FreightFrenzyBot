@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleTankDrive;
 
 @Autonomous
@@ -14,7 +15,9 @@ public class RedDownAuton extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        SampleTankDrive drive = new SampleTankDrive(hardwareMap);
+//        SampleTankDrive drive = new SampleTankDrive(hardwareMap);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
         Pose2d startPose = new Pose2d(-40.0, -62.0, Math.toRadians(90.0));
         drive.setPoseEstimate(startPose);
 

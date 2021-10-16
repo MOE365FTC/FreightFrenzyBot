@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.apache.commons.math3.stat.descriptive.moment.VectorialCovariance;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleTankDrive;
-import org.firstinspires.ftc.teamcode.tankDrive;
 
 @Autonomous
 public class BlueDownAuton extends LinearOpMode {
@@ -16,7 +16,8 @@ public class BlueDownAuton extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        SampleTankDrive drive = new SampleTankDrive(hardwareMap);
+//        SampleTankDrive drive = new SampleTankDrive(hardwareMap);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(-40.0, 62.0, Math.toRadians(-90.0));
         drive.setPoseEstimate(startPose);
 

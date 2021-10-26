@@ -21,7 +21,9 @@ public class IntakeRPM extends OpMode {
     @Override
     public void loop() {
         if (gamepad1.a) {
-            intake.setPower(0.8);
+            intake.setPower(-0.7);
+        } else{
+            intake.setPower(0.0);
         }
         if (gamepad1.b){
             intake.setVelocity(TestConstants.RPM);

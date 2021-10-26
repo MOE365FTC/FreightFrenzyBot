@@ -19,7 +19,7 @@ public class BlueDownAuton extends LinearOpMode {
 
 //        SampleTankDrive drive = new SampleTankDrive(hardwareMap);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(-40.0, 60.0, Math.toRadians(-90.0));
+        Pose2d startPose = new Pose2d(-40.0, 62.0, Math.toRadians(-90.0));
         drive.setPoseEstimate(startPose);
 
         Trajectory trajectory1 = drive.trajectoryBuilder(startPose.plus(new Pose2d(0.0, 0.0, Math.toRadians(110.0))))

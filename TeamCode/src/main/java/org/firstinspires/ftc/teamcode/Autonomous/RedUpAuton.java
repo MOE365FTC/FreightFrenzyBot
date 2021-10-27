@@ -3,10 +3,11 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-
+@Autonomous
 public class RedUpAuton extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -15,7 +16,11 @@ public class RedUpAuton extends LinearOpMode {
         Pose2d startPose = new Pose2d(5.0, -62.0, Math.toRadians(90.0));
         drive.setPoseEstimate(startPose);
 
-        Trajectory trajectory1 = drive.trajectoryBuilder(startPose.plus(new Pose2d(0.0, 0.0, Math.toRadians(-110.0))))
+        Trajectory trajectory0 = drive.trajectoryBuilder(startPose)
+                .forward(5)
+                .build();
+
+        Trajectory trajectory1 = drive.trajectoryBuilder(trajectory0.end().plus(new Pose2d(0.0, 0.0, Math.toRadians(-100.0))))
                 .back(45.0)
                 .build();
 
@@ -36,7 +41,9 @@ public class RedUpAuton extends LinearOpMode {
 
         waitForStart();
 
-        drive.turn(Math.toRadians(-110.0));
+        drive.followTrajectory(trajectory0);
+
+        drive.turn(Math.toRadians(-100.0));
 
         drive.followTrajectory(trajectory1);
 

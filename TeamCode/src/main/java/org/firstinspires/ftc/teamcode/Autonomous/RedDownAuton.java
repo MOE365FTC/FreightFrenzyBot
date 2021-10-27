@@ -19,8 +19,12 @@ public class RedDownAuton extends LinearOpMode {
         Pose2d startPose = new Pose2d(-40.0, -62.0, Math.toRadians(90.0));
         drive.setPoseEstimate(startPose);
 
-        Trajectory trajectory1 = drive.trajectoryBuilder(startPose.plus(new Pose2d(0.0, 0.0, Math.toRadians(-110.0))))
-                .back(15.0)
+      Trajectory trajectory0 = drive.trajectoryBuilder(startPose)
+              .forward(5)
+              .build();
+
+        Trajectory trajectory1 = drive.trajectoryBuilder(trajectory0.end().plus(new Pose2d(0.0, 0.0, Math.toRadians(-100.0))))
+                .back(10.0)
                 .build();
 
         Trajectory trajectory2 = drive.trajectoryBuilder(trajectory1.end())
@@ -40,7 +44,9 @@ public class RedDownAuton extends LinearOpMode {
 
         waitForStart();
 
-        drive.turn(Math.toRadians(-110.0));
+        drive.followTrajectory(trajectory0);
+
+        drive.turn(Math.toRadians(-100.0));
 
         drive.followTrajectory(trajectory1);
 

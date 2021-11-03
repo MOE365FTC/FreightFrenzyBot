@@ -26,8 +26,7 @@ public class startTurnTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         intake = hardwareMap.get(DcMotor.class, "BIM22");
 
-
-//        SampleTankDrive drive = new SampleTankDrive(hardwareMap);
+//        ONCE WE GET THE ACTUAL ROBOT CHECK GOOGLE DOC NAMED: UNCORRECTEDAUTON
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(-40.0, 62.0, Math.toRadians(0.0));
         drive.setPoseEstimate(startPose);
@@ -49,10 +48,10 @@ public class startTurnTest extends LinearOpMode {
                 .back(8)
                 .build();
 
-        Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end().plus(new Pose2d(0.0, 0.0, Math.toRadians(-135.0))), true)
-                .splineTo(new Vector2d(-10.0, 41.0), Math.toRadians(0.0))
-                .build();
-
+        Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end().plus(new Pose2d(0.0, 0.0, Math.toRadians(-150.0))), true)
+                .splineTo(new Vector2d(-8.0, 25.0), Math.toRadians(-15.0))
+                .build(); //SEVERE CORRECTION ADDED TO CORRECT RR ERROR
+                            //check uncorrected auton doc for original
         waitForStart();
 
         drive.followTrajectory(trajectory1);
@@ -73,7 +72,7 @@ public class startTurnTest extends LinearOpMode {
 
         drive.followTrajectory(trajectory4);
 
-        drive.turn(Math.toRadians(-135.0));
+        drive.turn(Math.toRadians(-150.0));
 
         drive.followTrajectory(trajectory5);
 

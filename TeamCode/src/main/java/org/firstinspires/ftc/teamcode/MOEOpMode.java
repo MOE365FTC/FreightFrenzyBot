@@ -1,32 +1,41 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@TeleOp
+@Config
 public class MOEOpMode extends OpMode {
-    DcMotor frontLeft;
-    DcMotor frontRight;
-    DcMotor backLeft;
-    DcMotor backRight;
+    public DcMotor frontLeft;
+    public DcMotor frontRight;
+    public DcMotor backLeft;
+    public DcMotor backRight;
 
-    DcMotorEx slideExtend;
-    DcMotorEx slideRotate;
+    public DcMotorEx slideExtend;
+    public DcMotorEx slideRotate;
+    public DcMotorEx intake;
+    public CRServo carousel;
+    public Servo odoLift;
 
-    DcMotorEx intake;
-    CRServo carousel;
-    Servo odoLift;
-
-    int EXTENSION = 250;
-    int ROTATE = 100;
-    int SLIDE_MULTIPLIER = 30;
-
+    public static int EXTENSION = 250;
+    public static int ROTATE = 100;
+    public static int SLIDE_MULTIPLIER = 30;
+    public static double INTAKE_POWER = 1.0;
+    public static double INTAKE_CURRENT = 700;
+    public static boolean holding = false;
     ElapsedTime timer = new ElapsedTime();
-    @Override
-    public void init() {
+
+    HardwareMap hwMap;
+
+    public void init(HardwareMap aHwMap) {
+        hwMap = aHwMap;
         frontLeft = hardwareMap.get(DcMotor.class, "FLM");
         frontRight = hardwareMap.get(DcMotor.class, "FRM");
         backLeft = hardwareMap.get(DcMotor.class, "BLM");
@@ -50,7 +59,10 @@ public class MOEOpMode extends OpMode {
         odoLift = hardwareMap.get(Servo.class, "OLS");
     }
 
-    @Override
+    public void init() {
+
+    }
+
     public void loop() {
 
     }

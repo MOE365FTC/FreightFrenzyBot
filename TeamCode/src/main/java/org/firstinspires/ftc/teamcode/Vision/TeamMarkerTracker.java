@@ -21,63 +21,54 @@ import java.util.List;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 @Config
 public class TeamMarkerTracker extends OpenCvPipeline {
-    public static int lowHue = 105;
-    public static int lowSat = 15;
-    public static int lowVal = 65;
-    public static int highHue = 130;
-    public static int highSat = 50;
-    public static int highVal = 35;
     Mat mat = new Mat();
-    Mat blue = new Mat();
-    Mat yellow = new Mat();
-    double imagex, iamgey;
-    double xcoordinate = 0;
-    double maxx = 0;
-    int counterrr = 0;
-    int counter2 = 0;
-
+    Mat hsv = new Mat();
+    Mat mask = new Mat();
+    double xpos = 0;
+    int n = 5;
+    double area = 0;
+    Mat inverted = new Mat();
+    int position = 0;
+    int coutner = 0;
+    double height = 0, width = 0, channels = 0;
+    Scalar low_range = new Scalar(36, 0, 0);
+    Scalar upper_range = new Scalar(80, 255, 255);
     @Override
     public Mat processFrame(Mat input) {
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_BGR2HSV);
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+        height = input.height();
+        width = input.width();
 
-        Size s = mat.size();
-        imagex = s.width;
-        Scalar lowblue = new Scalar(lowHue, lowSat, lowVal);
-        Scalar highblue = new Scalar(highHue, highSat, highVal);
-//
-        Core.inRange(mat, lowblue, highblue, blue);
-        Mat gray = new Mat(blue.rows(), blue.cols(), blue.type());
-        Imgproc.cvtColor(mat, gray, Imgproc.COLOR_BGR2GRAY);
-        Mat binary = new Mat(blue.rows(), blue.cols(), blue.type(), new Scalar(0));
-        Imgproc.threshold(gray, binary, 100, 255, Imgproc.THRESH_BINARY_INV);
-//        //Finding Contours
+        Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
+        mask = mat.clone();
+        Core.inRange(hsv, low_range, upper_range, mask);
+        int whitePixels = 0;
+        Mat binary = new Mat(mask.rows(), mask.cols(), mask.type(), new Scalar(0));
+        Imgproc.threshold(mask, binary, 100, 255, Imgproc.THRESH_BINARY_INV);
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchey = new Mat();
         Imgproc.findContours(binary, contours, hierarchey, Imgproc.RETR_TREE,
                 Imgproc.CHAIN_APPROX_SIMPLE);
-        int counter = 0;
-        counter2 = 0;
-        double maxcounter = 0;
-        maxx = 0;
-        for (int i = 0; i < contours.size(); i++) {
+        coutner = 0;
+        xpos = 0;
+        for (int i=0; i < contours.size(); i++) {
             double cont_area = Imgproc.contourArea(contours.get(i));
-            counter2++;
-            if (cont_area > maxcounter) {
-                maxcounter = cont_area;
-                counter = i;
-                maxx = cont_area;
+            if (cont_area > 200.0 && cont_area < 1000.0) {
+                coutner++;
+                Rect rect = Imgproc.boundingRect(contours.get(i));
+                xpos = rect.x;
+                area = cont_area;
             }
         }
-        counterrr = 0;
-        xcoordinate = 0;
-        for (int i = 0; i < contours.size(); i++) {
-            if (i == counter) {
-                counterrr += 1;
-                Rect boundingrect = Imgproc.boundingRect(contours.get(i));
-                xcoordinate = boundingrect.x + boundingrect.width;
-            }
+        if (xpos == 0.0 || xpos > 120) {
+            position = 1;
+        } else if (xpos > 50 && xpos < 110) {
+            position = 2;
+        } else {
+            position = 3;
         }
-//        telemetry.addData("letsee", imagex);
+        Mat invertcolormatrix= new Mat(mask.rows(),mask.cols(), mask.type(), new Scalar(255,255,255));
+        Core.subtract(invertcolormatrix, mask, inverted);
         return input;
     }
 }

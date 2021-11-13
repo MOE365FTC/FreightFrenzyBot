@@ -40,10 +40,15 @@ public class OutputtingTeamMarkerPos extends OpMode {
 ////        }
         FtcDashboard.getInstance().startCameraStream(camera, 60);
         telemetry.addData("position", "somethign");
-        telemetry.addData("iamgex", tracker.imagex);
-        telemetry.addData("counterrr", tracker.counterrr);
-        telemetry.addData("xvalue", tracker.xcoordinate);
-        telemetry.addData("max", tracker.maxx);
+//        telemetry.addData("iamgex", tracker.imagex);
+//        telemetry.addData("counterrr", tracker.counterrr);
+//        telemetry.addData("xvalue", tracker.xcoordinate);
+//        telemetry.addData("max", tracker.maxx);
+        telemetry.addData("counter", tracker.coutner);
+        telemetry.addData("chalnes", tracker.channels);
+        telemetry.addData("area", tracker.area);
+        telemetry.addData("xpos", tracker.xpos);
+        telemetry.addData("position", tracker.position);
 //        telemetry.addData("imagex", tracker.imagex);
 //        telemetry.addData("counter", tracker.counter2);
     }

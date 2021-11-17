@@ -3,9 +3,8 @@ package org.firstinspires.ftc.teamcode.tuning;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MOEOpMode;
-import org.firstinspires.ftc.teamcode.Toggle;
+import org.firstinspires.ftc.teamcode.util.Toggle;
 
 @Config
 @TeleOp
@@ -18,7 +17,7 @@ public class Slides extends MOEOpMode {
     }
     public void loop(){
         slideExtend.setTargetPosition((int) (gamepad1.right_stick_y * EXTENSION));
-        slideRotate.setTargetPosition((int) (gamepad1.right_stick_x * EXTENSION));
+        slideRotate.setTargetPosition((int) (gamepad1.right_stick_x * ROTATE));
 
         if(Toggle.xToggled){
             slideExtend.setPower(1.0);

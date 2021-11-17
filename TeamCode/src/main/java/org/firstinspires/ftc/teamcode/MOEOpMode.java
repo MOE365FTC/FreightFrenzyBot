@@ -23,13 +23,25 @@ public class MOEOpMode extends OpMode {
     public DcMotorEx intake;
     public CRServo carousel;
     public Servo odoLift;
+    public Servo outtake;
 
-    public static int EXTENSION = 250;
-    public static int ROTATE = 100;
+    public static int STORED_EXTEND = 0;
+    public static int LOW_EXTEND = 250;
+    public static int MID_EXTEND = 250;
+    public static int HIGH_EXTEND = 250;
+
+    public static int STORED_ROTATE = 0;
+    public static int LOW_ROTATE = 100;
+    public static int MID_ROTATE = 100;
+    public static int HIGH_ROTATE = 100;
+
     public static int SLIDE_MULTIPLIER = 30;
     public static double INTAKE_POWER = 1.0;
     public static double INTAKE_CURRENT = 700;
     public static boolean holding = false;
+    public static double OUTTAKE_OPEN = 1.0;
+    public static double OUTTAKE_CLOSED = 0.0;
+    public static double CAROUSEL_POWER = 1.0;
     ElapsedTime timer = new ElapsedTime();
 
     HardwareMap hwMap;
@@ -57,6 +69,7 @@ public class MOEOpMode extends OpMode {
         intake = hardwareMap.get(DcMotorEx.class, "INM");
         carousel = hardwareMap.get(CRServo.class, "CSS");
         odoLift = hardwareMap.get(Servo.class, "OLS");
+        outtake = hardwareMap.get(Servo.class, "OTS");
     }
 
     public void init() {

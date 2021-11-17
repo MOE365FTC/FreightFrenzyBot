@@ -27,7 +27,7 @@ public class PathTuningTest extends PathVariables {
 
 
         Trajectory trajectory1 = drive.trajectoryBuilder(startPose, true)
-                .splineTo(traj1point, traj1heading)
+                .splineTo(new Vector2d(traj1x, traj1y), traj1heading)
                 .build();
 
         Trajectory trajectory2 = drive.trajectoryBuilder(trajectory1.end())
@@ -42,10 +42,14 @@ public class PathTuningTest extends PathVariables {
                 .back(traj4back)
                 .build();
 
+//        Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end().plus(new Pose2d(0.0, 0.0, traj4turn)), true)
+//                .splineTo(new Vector2d(traj5x, traj5y), traj5heading)
+//                .build(); //SEVERE CORRECTION ADDED TO CORRECT RR ERROR
+//        //check uncorrected auton doc for original
+
         Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end().plus(new Pose2d(0.0, 0.0, traj4turn)), true)
-                .splineTo(traj5point, traj5heading)
-                .build(); //SEVERE CORRECTION ADDED TO CORRECT RR ERROR
-        //check uncorrected auton doc for original
+                .back(traj5back)
+                .build();
 
         waitForStart();
 
@@ -74,7 +78,7 @@ public class PathTuningTest extends PathVariables {
         intake.setPower(1.0);
         hold(1.0); //raise odometry wheels
         intake.setPower(0.0);
-
+        
     }
 
 }

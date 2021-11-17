@@ -12,7 +12,8 @@ public class PathVariables extends LinearOpMode {
 
     Pose2d startPosition = new Pose2d(-40.0, 62.0, Math.toRadians(0.0));
 
-    Vector2d traj1point = new Vector2d(-55.0, 60.0);
+    double traj1x = -55.0;
+    double traj1y = 60.0;
     double traj1heading = Math.toRadians(-180.0);
 
     double traj2forward = 5.0;
@@ -23,8 +24,7 @@ public class PathVariables extends LinearOpMode {
     double traj4back = 8.0;
     double traj4turn = Math.toRadians(-150.0);
 
-    Vector2d traj5point = new Vector2d(-8.0, 25.0);
-    double traj5heading = Math.toRadians(-15.0);
+    double traj5back = 38.0;
 
     //FUNCTIONS
 

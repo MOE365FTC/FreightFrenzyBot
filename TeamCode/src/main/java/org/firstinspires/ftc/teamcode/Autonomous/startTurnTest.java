@@ -48,10 +48,16 @@ public class startTurnTest extends LinearOpMode {
                 .back(8)
                 .build();
 
-        Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end().plus(new Pose2d(0.0, 0.0, Math.toRadians(-150.0))), true)
-                .splineTo(new Vector2d(-8.0, 25.0), Math.toRadians(-15.0))
-                .build(); //SEVERE CORRECTION ADDED TO CORRECT RR ERROR
-                            //check uncorrected auton doc for original
+//       Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end().plus(new Pose2d(0.0, 0.0, Math.toRadians(-150.0))), true)
+//                .splineTo(new Vector2d(-8.0, 25.0), Math.toRadians(-15.0))
+//                .build(); //SEVERE CORRECTION ADDED TO CORRECT RR ERROR
+//                            //check uncorrected auton doc for original
+         Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end().plus(new Pose2d(0.0, 0.0, Math.toRadians(-150.0))), true)
+                 .back(38.0)
+                 .build();
+
+
+
         waitForStart();
 
         drive.followTrajectory(trajectory1);
@@ -75,6 +81,7 @@ public class startTurnTest extends LinearOpMode {
         drive.turn(Math.toRadians(-150.0));
 
         drive.followTrajectory(trajectory5);
+
 
         intake.setPower(1.0);
         hold(1.0); //raise odometry wheels

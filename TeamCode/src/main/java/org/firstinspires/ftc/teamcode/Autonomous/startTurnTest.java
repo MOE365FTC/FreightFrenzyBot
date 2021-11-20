@@ -87,5 +87,27 @@ public class startTurnTest extends LinearOpMode {
         hold(1.0); //raise odometry wheels
         intake.setPower(0.0);
 
+        drive.manualDrive(-1.0);
+        hold(1.0);
+        drive.manualDrive(0.0);
+
+        drive.manualTurn(-1.0, 1.0);
+        hold(0.25);
+        drive.manualTurn(0.0,0.0);
+
+        intake.setPower(1.0);
+        drive.manualDrive(-1.0);
+        hold(1.0);
+        drive.manualDrive(0.0);
+        hold(0.2);
+        intake.setPower(0.0);
+
+        drive.manualTurn(1.0, -1.0);
+        hold(0.25);
+        drive.manualTurn(0.0,0.0);
+
+        drive.manualDrive(1.0);
+        hold(1.0);
+        drive.manualDrive(0.0);
     }
 }

@@ -65,6 +65,7 @@ public class SampleTankDrive extends TankDrive {
 
     private TrajectoryFollower follower;
 
+    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors, leftMotors, rightMotors;
     private BNO055IMU imu;
 
@@ -126,6 +127,20 @@ public class SampleTankDrive extends TankDrive {
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+    }
+
+    public void manualDrive(Double power){
+        leftFront.setPower(power);
+        rightFront.setPower(power);
+        leftRear.setPower(power);
+        rightRear.setPower(power);
+    }
+
+    public void manualTurn(Double leftPower, Double rightPower){
+        leftFront.setPower(leftPower);
+        rightFront.setPower(rightPower);
+        leftRear.setPower(leftPower);
+        rightRear.setPower(rightPower);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 @TeleOp
-public class mechanumDrive extends OpMode {
+public class mecanumDrive extends OpMode {
 
     DcMotor motorFrontLeft;
     DcMotor motorBackLeft;

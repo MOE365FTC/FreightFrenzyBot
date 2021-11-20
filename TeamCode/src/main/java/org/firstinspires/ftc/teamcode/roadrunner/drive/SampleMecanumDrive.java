@@ -130,6 +130,20 @@ public class SampleMecanumDrive extends MecanumDrive {
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
 
+    public void manualDrive(Double power){
+        leftFront.setPower(power);
+        rightFront.setPower(power);
+        leftRear.setPower(power);
+        rightRear.setPower(power);
+    }
+
+    public void manualTurn(Double leftPower, Double rightPower){
+        leftFront.setPower(leftPower);
+        rightFront.setPower(rightPower);
+        leftRear.setPower(leftPower);
+        rightRear.setPower(rightPower);
+    }
+
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
     }

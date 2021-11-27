@@ -45,11 +45,29 @@ public class Toggle {
         olda2 = gamepad2.a;
         if (gamepad1.x && !oldX) xToggled = !xToggled;
         oldX = gamepad1.x;
-        if (gamepad1.dpad_up && !oldDpadUp) dpadUpToggled = !dpadUpToggled;
+        if (gamepad1.dpad_up && !oldDpadUp) {
+            dpadUpToggled = !dpadUpToggled;
+            if(dpadUpToggled) {
+                dpadDownToggled = false;
+                dpadLeftToggled = false;
+            }
+        }
         oldDpadUp = gamepad1.dpad_up;
-        if (gamepad1.dpad_down && !oldDpadDown) dpadDownToggled = !dpadDownToggled;
+        if (gamepad1.dpad_down && !oldDpadDown) {
+            dpadDownToggled = !dpadDownToggled;
+            if(dpadDownToggled) {
+                dpadUpToggled = false;
+                dpadLeftToggled = false;
+            }
+        }
         oldDpadDown = gamepad1.dpad_down;
-        if (gamepad1.dpad_left && !oldDpadLeft) dpadLeftToggled = !dpadLeftToggled;
+        if (gamepad1.dpad_left && !oldDpadLeft) {
+            dpadLeftToggled = !dpadLeftToggled;
+            if(dpadLeftToggled) {
+                dpadDownToggled = false;
+                dpadUpToggled = false;
+            }
+        }
         oldDpadLeft = gamepad1.dpad_left;
         if (gamepad1.dpad_right && !oldDpadRight) dpadRightToggled = !dpadRightToggled;
         oldDpadRight = gamepad1.dpad_right;

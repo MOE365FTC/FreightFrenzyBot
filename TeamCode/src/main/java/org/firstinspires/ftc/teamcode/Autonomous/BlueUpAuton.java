@@ -3,23 +3,17 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Autonomous.PathTuning.PathVariables;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 @Autonomous
-public class BlueUpAuton extends LinearOpMode {
+public class BlueUpAuton extends PathVariables {
     DcMotor intake;
-
-    ElapsedTime timer = new ElapsedTime();
-    public void hold(double waitTime) {
-        timer.reset();
-        while(timer.time() < waitTime && opModeIsActive()) {
-
-        }
-    }
 
 
     @Override
@@ -28,56 +22,60 @@ public class BlueUpAuton extends LinearOpMode {
 
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(5.0, 62.0, Math.toRadians(-90.0));
+        Pose2d startPose = startPositionUp;
         drive.setPoseEstimate(startPose);
 
-        Trajectory trajectory0 = drive.trajectoryBuilder(startPose)
-                .forward(8)
+        Trajectory trajectory1 = drive.trajectoryBuilder(startPose.plus(new Pose2d(0.0, 0.0, UpTraj1turn)))
+                .forward(UpTraj1forward)
                 .build();
-
-        Trajectory trajectory1 = drive.trajectoryBuilder(trajectory0.end().plus(new Pose2d(0.0, 0.0, Math.toRadians(100.0))))
-                .back(45.0)
-                .build();
-
 
         Trajectory trajectory2 = drive.trajectoryBuilder(trajectory1.end())
-                .splineTo(new Vector2d(-45.0, 27.0), Math.toRadians(0.0))
-                .forward(10)
+                .back(UpTraj2back)
                 .build();
 
-        Trajectory trajectory3 = drive.trajectoryBuilder(trajectory2.end())
-                .back(6)
-                .splineTo(new Vector2d(-30.0, 42.0), Math.toRadians(0.0))
-                .build();
-
-        Trajectory trajectory4 = drive.trajectoryBuilder(trajectory3.end(), true)
-                .splineTo(new Vector2d(5.0, 41.0), Math.toRadians(0.0))
+        Trajectory trajectory3 = drive.trajectoryBuilder(trajectory2.end().plus(new Pose2d(0.0, 0.0, UpTraj2turn)))
+                .back(UpTraj3back)
                 .build();
 
         waitForStart();
 
-        drive.followTrajectory(trajectory0);
-
-        drive.turn(Math.toRadians(100.0));
+        drive.turn(UpTraj1turn);
 
         drive.followTrajectory(trajectory1);
 
-        intake.setPower(1.0);
-        hold(3.0); //spin ducks
-        intake.setPower(0.0);
+        //DEPOSIT
 
         drive.followTrajectory(trajectory2);
 
-        intake.setPower(1.0);
-        hold(5.0); //deposit preload
-        intake.setPower(0.0);
+        drive.turn(UpTraj2turn);
 
         drive.followTrajectory(trajectory3);
-
-        drive.followTrajectory(trajectory4);
 
         intake.setPower(1.0);
         hold(1.0); //raise odometry wheels
         intake.setPower(0.0);
+
+        drive.manualDrive(-1.0);
+        hold(1.0);
+        drive.manualDrive(0.0);
+
+        drive.manualTurn(-1.0, 1.0);
+        hold(0.25);
+        drive.manualTurn(0.0,0.0);
+
+        intake.setPower(1.0);
+        drive.manualDrive(-1.0);
+        hold(1.0);
+        drive.manualDrive(0.0);
+        hold(0.2);
+        intake.setPower(0.0);
+
+        drive.manualTurn(1.0, -1.0);
+        hold(0.25);
+        drive.manualTurn(0.0,0.0);
+
+        drive.manualDrive(1.0);
+        hold(1.0);
+        drive.manualDrive(0.0);
     }
 }

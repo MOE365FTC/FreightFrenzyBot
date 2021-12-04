@@ -11,60 +11,52 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.apache.commons.math3.stat.descriptive.moment.VectorialCovariance;
+import org.firstinspires.ftc.teamcode.Autonomous.PathTuning.PathVariables;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleTankDrive;
 
 @Autonomous
-public class BlueDownAuton extends LinearOpMode {
-
+public class BlueDownAuton extends PathVariables {
     DcMotor intake;
 
-    ElapsedTime timer = new ElapsedTime();
-    public void hold(double waitTime) {
-        timer.reset();
-        while(timer.time() < waitTime && opModeIsActive()) {
 
-        }
-    }
 
     @Override
     public void runOpMode() throws InterruptedException {
         intake = hardwareMap.get(DcMotor.class, "BIM22");
 
-
-//        SampleTankDrive drive = new SampleTankDrive(hardwareMap);
+//        ONCE WE GET THE ACTUAL ROBOT CHECK GOOGLE DOC NAMED: UNCORRECTEDAUTON
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(-40.0, 62.0, Math.toRadians(-90.0));
+        Pose2d startPose = startPosition;
         drive.setPoseEstimate(startPose);
 
-        Trajectory trajectory0 = drive.trajectoryBuilder(startPose)
-            .forward(8)
-            .build();
 
-        Trajectory trajectory1 = drive.trajectoryBuilder(trajectory0.end().plus(new Pose2d(0.0, 0.0, Math.toRadians(100.0))))
-            .back(15.0)
-            .build();
-
+        Trajectory trajectory1 = drive.trajectoryBuilder(startPose, true)
+                .splineTo(new Vector2d(traj1x, traj1y), traj1heading)
+                .build();
 
         Trajectory trajectory2 = drive.trajectoryBuilder(trajectory1.end())
-            .splineTo(new Vector2d(-45.0, 27.0), Math.toRadians(0.0))
-            .forward(5)
-            .build();
+                .forward(traj2forward)
+                .build();
 
-        Trajectory trajectory3 = drive.trajectoryBuilder(trajectory2.end())
-            .back(5)
-            .splineTo(new Vector2d(-30.0, 42.0), Math.toRadians(0.0))
-            .build();
+        Trajectory trajectory3 = drive.trajectoryBuilder(trajectory2.end().plus(new Pose2d(0.0, 0.0, traj2turn)))
+                .forward(traj3forward)
+                .build();
 
-        Trajectory trajectory4 = drive.trajectoryBuilder(trajectory3.end(), true)
-            .splineTo(new Vector2d(5.0, 41.0), Math.toRadians(0.0))
-            .build();
-            
+        Trajectory trajectory4 = drive.trajectoryBuilder(trajectory3.end())
+                .back(traj4back)
+                .build();
+
+//        Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end().plus(new Pose2d(0.0, 0.0, traj4turn)), true)
+//                .splineTo(new Vector2d(traj5x, traj5y), traj5heading)
+//                .build(); //SEVERE CORRECTION ADDED TO CORRECT RR ERROR
+//        //check uncorrected auton doc for original
+
+        Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end().plus(new Pose2d(0.0, 0.0, traj4turn)), true)
+                .back(traj5back)
+                .build();
+
         waitForStart();
-
-        drive.followTrajectory(trajectory0);
-
-        drive.turn(Math.toRadians(100.0));
 
         drive.followTrajectory(trajectory1);
 
@@ -74,20 +66,46 @@ public class BlueDownAuton extends LinearOpMode {
 
         drive.followTrajectory(trajectory2);
 
+        drive.turn(traj2turn);
+
+        drive.followTrajectory(trajectory3);
+
         intake.setPower(1.0);
         hold(5.0); //deposit preload
         intake.setPower(0.0);
 
-        drive.followTrajectory(trajectory3);
-
         drive.followTrajectory(trajectory4);
+
+        drive.turn(traj4turn);
+
+        drive.followTrajectory(trajectory5);
 
         intake.setPower(1.0);
         hold(1.0); //raise odometry wheels
         intake.setPower(0.0);
 
+        drive.manualDrive(-1.0);
+        hold(1.0);
+        drive.manualDrive(0.0);
+
+        drive.manualTurn(-1.0, 1.0);
+        hold(0.25);
+        drive.manualTurn(0.0,0.0);
+
+        intake.setPower(1.0);
+        drive.manualDrive(-1.0);
+        hold(1.0);
+        drive.manualDrive(0.0);
+        hold(0.2);
+        intake.setPower(0.0);
+
+        drive.manualTurn(1.0, -1.0);
+        hold(0.25);
+        drive.manualTurn(0.0,0.0);
+
+        drive.manualDrive(1.0);
+        hold(1.0);
+        drive.manualDrive(0.0);
     }
-
-
 
 }

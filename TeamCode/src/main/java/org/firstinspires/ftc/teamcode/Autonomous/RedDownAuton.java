@@ -5,59 +5,104 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.Autonomous.PathTuning.PathVariables;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleTankDrive;
 
 @Autonomous
-public class RedDownAuton extends LinearOpMode {
-
-    @Override
-    public void runOpMode() throws InterruptedException {
-
-      SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(-40.0, -62.0, Math.toRadians(90.0));
-        drive.setPoseEstimate(startPose);
-
-      Trajectory trajectory0 = drive.trajectoryBuilder(startPose)
-              .forward(5)
-              .build();
-
-        Trajectory trajectory1 = drive.trajectoryBuilder(trajectory0.end().plus(new Pose2d(0.0, 0.0, Math.toRadians(-100.0))))
-                .back(10.0)
-                .build();
-
-        Trajectory trajectory2 = drive.trajectoryBuilder(trajectory1.end())
-                .splineTo(new Vector2d(-45.0, -27.0), Math.toRadians(0.0))
-                .forward(10)
-                .build();
+public class RedDownAuton extends PathVariables {
+  DcMotor intake;
 
 
-        Trajectory trajectory3 = drive.trajectoryBuilder(trajectory2.end())
-                .back(6.0)
-                .splineTo(new Vector2d(-30.0, -42.0), Math.toRadians(0.0))
-                .build();
 
-        Trajectory trajectory4 = drive.trajectoryBuilder(trajectory3.end(), true)
-                .splineTo(new Vector2d(13.0, -41.0), Math.toRadians(0.0))
-                .build();
+  @Override
+  public void runOpMode() throws InterruptedException {
+    intake = hardwareMap.get(DcMotor.class, "BIM22");
 
-        waitForStart();
+//        ONCE WE GET THE ACTUAL ROBOT CHECK GOOGLE DOC NAMED: UNCORRECTEDAUTON
+    SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+    Pose2d startPose = new Pose2d(-40.0, -62.0, Math.toRadians(0.0));
+    drive.setPoseEstimate(startPose);
 
-        drive.followTrajectory(trajectory0);
 
-        drive.turn(Math.toRadians(-100.0));
+    Trajectory trajectory1 = drive.trajectoryBuilder(startPose, true)
+            .splineTo(new Vector2d(traj1x, -traj1y), traj1heading)
+            .build();
 
-        drive.followTrajectory(trajectory1);
+    Trajectory trajectory2 = drive.trajectoryBuilder(trajectory1.end())
+            .forward(traj2forward)
+            .build();
 
-        drive.followTrajectory(trajectory2);
+    Trajectory trajectory3 = drive.trajectoryBuilder(trajectory2.end().plus(new Pose2d(0.0, 0.0, -traj2turn)))
+            .forward(traj3forward - 4.0)
+            .build();
 
-        //DO OUTAKE
+    Trajectory trajectory4 = drive.trajectoryBuilder(trajectory3.end())
+            .back(traj4back)
+            .build();
 
-        drive.followTrajectory(trajectory3);
+//        Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end().plus(new Pose2d(0.0, 0.0, traj4turn)), true)
+//                .splineTo(new Vector2d(traj5x, traj5y), traj5heading)
+//                .build(); //SEVERE CORRECTION ADDED TO CORRECT RR ERROR
+//        //check uncorrected auton doc for original
 
-        drive.followTrajectory(trajectory4);
-    }
+    Trajectory trajectory5 = drive.trajectoryBuilder(trajectory4.end().plus(new Pose2d(0.0, 0.0, -traj4turn)), true)
+            .back(traj5back)
+            .build();
+
+    waitForStart();
+
+    drive.followTrajectory(trajectory1);
+
+    intake.setPower(1.0);
+    hold(3.0); //spin ducks
+    intake.setPower(0.0);
+
+    drive.followTrajectory(trajectory2);
+
+    drive.turn(-traj2turn);
+
+    drive.followTrajectory(trajectory3);
+
+    intake.setPower(1.0);
+    hold(5.0); //deposit preload
+    intake.setPower(0.0);
+
+    drive.followTrajectory(trajectory4);
+
+    drive.turn(-traj4turn);
+
+    drive.followTrajectory(trajectory5);
+
+    intake.setPower(1.0);
+    hold(1.0); //raise odometry wheels
+    intake.setPower(0.0);
+
+    drive.manualDrive(-1.0);
+    hold(1.0);
+    drive.manualDrive(0.0);
+
+    drive.manualTurn(-1.0, 1.0);
+    hold(0.25);
+    drive.manualTurn(0.0,0.0);
+
+    intake.setPower(1.0);
+    drive.manualDrive(-1.0);
+    hold(1.0);
+    drive.manualDrive(0.0);
+    hold(0.2);
+    intake.setPower(0.0);
+
+    drive.manualTurn(1.0, -1.0);
+    hold(0.25);
+    drive.manualTurn(0.0,0.0);
+
+    drive.manualDrive(1.0);
+    hold(1.0);
+    drive.manualDrive(0.0);
+  }
 
 
 }

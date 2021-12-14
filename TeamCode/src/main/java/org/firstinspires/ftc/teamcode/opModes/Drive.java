@@ -10,11 +10,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class  Drive extends OpMode {
     DcMotor motorFrontLeft;
     DcMotor motorBackLeft;
+    DcMotor motorMiddleLeft;
     DcMotor motorFrontRight;
     DcMotor motorBackRight;
+    DcMotor motorMiddleRight;
     Boolean armCheck = false;
     Boolean spinToggle = false;
     DcMotor arm;
+    DcMotor intake;
     Servo grabber;
     CRServo spinner;
     double position = 0.0; // Change Value
@@ -24,15 +27,16 @@ public class  Drive extends OpMode {
 
     @Override
     public void init() {
-        motorFrontLeft = hardwareMap.dcMotor.get("FLM");
-        motorBackLeft = hardwareMap.dcMotor.get("BLM");
-        motorFrontRight = hardwareMap.dcMotor.get("FRM");
-        motorBackRight = hardwareMap.dcMotor.get("BRM");
+        motorFrontLeft = hardwareMap.dcMotor.get("TLM10");
+        motorBackLeft = hardwareMap.dcMotor.get("BLM11");
+        motorFrontRight = hardwareMap.dcMotor.get("TRM12");
+        motorBackRight = hardwareMap.dcMotor.get("BRM13");
         arm = hardwareMap.dcMotor.get("arm");
         grabber = hardwareMap.servo.get("grabber");
-        spinner = hardwareMap.crservo.get("spinner");
+        spinner = hardwareMap.crservo.get("blueSpinner");
+        intake = hardwareMap.dcMotor.get("intake23");
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -41,13 +45,18 @@ public class  Drive extends OpMode {
 
     @Override
     public void loop() {
-        MOEvement();
-        arm();
+//        MOEvement();
+        intake();
         spinCarousel();
+        drive();
     }
-
+    public void drive(){
+        motorFrontLeft.setPower(-gamepad1.left_stick_y * 0.5);
+        motorBackLeft.setPower(-gamepad1.left_stick_y * 0.5);
+        motorFrontRight.setPower(gamepad1.right_stick_y * 0.5);
+        motorBackRight.setPower(gamepad1.right_stick_y * 0.5);
+    }
     public void MOEvement() {
-        // Below drive should work use the backup one (more basic) if it doesn't
         double drivePower = -gamepad1.left_stick_y;
         double rotationPower = gamepad1.right_stick_x;
 
@@ -62,23 +71,11 @@ public class  Drive extends OpMode {
 //        motorBackRight.setPower(-gamepad1.right_stick_y);
     }
 
-    public void arm() {
-        if (!gamepad1.dpad_up && gamepad1.dpad_down) {
-            arm.setPower((gamepad1.dpad_up ? 1 : 0) * -armPower);
-
-        } else if (gamepad1.dpad_up && !gamepad1.dpad_down) {
-            arm.setPower((gamepad1.dpad_up ? 1 : 0) * armPower);
-
-        }  else {
-            arm.setPower(0);
-        }
-
-        if (gamepad1.a && !armCheck) {
-            grabber.setPosition(position);
-            armCheck = true;
-        } else if (gamepad1.a) {
-            grabber.setPosition(position);
-            armCheck = !armCheck;
+    public void intake() {
+        if(gamepad1.x){
+            intake.setPower(1.0);
+        } else{
+            intake.setPower(0.0);
         }
     }
 

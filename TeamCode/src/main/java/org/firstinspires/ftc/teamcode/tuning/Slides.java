@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
-import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.MOEOpMode;
+import org.firstinspires.ftc.teamcode.teleop.MOEOpMode;
 import org.firstinspires.ftc.teamcode.util.Toggle;
 
-@Config
+
+//@Config
 @TeleOp
 public class Slides extends MOEOpMode {
     public static int EXTENSION = 100;

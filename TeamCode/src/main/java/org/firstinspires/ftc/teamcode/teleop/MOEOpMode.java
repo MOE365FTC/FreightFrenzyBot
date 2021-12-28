@@ -10,30 +10,20 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp
+//@TeleOp
 //@Config
 public class MOEOpMode extends OpMode {
-    public DcMotor frontLeft;
-    public DcMotor frontRight;
-    public DcMotor backLeft;
-    public DcMotor backRight;
+    public DcMotor frontLeft, frontRight, backLeft, backRight;
 
-    public DcMotorEx slideExtend;
-    public DcMotorEx slideRotate;
+    public DcMotorEx slideExtend, slideRotate;
     public DcMotorEx intake;
     public CRServo carousel;
     public Servo odoLift;
     public Servo outtake;
 
-    public static int STORED_EXTEND = 0;
-    public static int LOW_EXTEND = 250;
-    public static int MID_EXTEND = 250;
-    public static int HIGH_EXTEND = 250;
+    public static int STORED_EXTEND = 0, LOW_EXTEND = 250, MID_EXTEND = 250, HIGH_EXTEND = 250;
 
-    public static int STORED_ROTATE = 0;
-    public static int LOW_ROTATE = 100;
-    public static int MID_ROTATE = 100;
-    public static int HIGH_ROTATE = 100;
+    public static int STORED_ROTATE = 0, LOW_ROTATE = 100, MID_ROTATE = 100, HIGH_ROTATE = 100;
 
     public static int SLIDE_MULTIPLIER = 30;
     public static double INTAKE_POWER = 1.0;

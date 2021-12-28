@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
 //import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.teamcode.teleop.MOEOpMode;
-
+@Disabled
 @TeleOp
 //@Config
 public class Carousel extends MOEOpMode {

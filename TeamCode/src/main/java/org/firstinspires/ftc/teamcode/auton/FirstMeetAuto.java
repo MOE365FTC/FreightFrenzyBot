@@ -9,12 +9,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
-public class FirstMeetAutoBlue extends LinearOpMode {
+public class FirstMeetAuto extends LinearOpMode {
     DcMotor motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
     Boolean armCheck = false;
     Boolean spinToggle = false;
     DcMotorEx arm;
-    Servo servoArm;
+    Servo servoArm, outtake;
     DcMotor intake;
     Servo grabber;
     CRServo spinner;
@@ -47,12 +47,13 @@ public class FirstMeetAutoBlue extends LinearOpMode {
         motorBackLeft = hardwareMap.dcMotor.get("BLM11");
         motorFrontRight = hardwareMap.dcMotor.get("TRM12");
         motorBackRight = hardwareMap.dcMotor.get("BRM13");
-        arm = hardwareMap.get(DcMotorEx.class, "arm");
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setTargetPosition(0);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        servoArm = hardwareMap.get(Servo.class, "servoArm11");
-        grabber = hardwareMap.servo.get("grabber");
+        arm = hardwareMap.get(DcMotorEx.class, "arm20"); //arm
+//        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        arm.setTargetPosition(0);
+//        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        servoArm = hardwareMap.get(Servo.class, "servoArm12");
+//        grabber = hardwareMap.servo.get("grabber");
+        outtake = hardwareMap.servo.get("out11");
         spinner = hardwareMap.crservo.get("blueSpinner");
         intake = hardwareMap.dcMotor.get("intake23");
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);

@@ -3,31 +3,45 @@ package org.firstinspires.ftc.teamcode.teleop;
 //import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-//x2 intake
-//y2 toggle servo arm
-//b2 outtake
-//rightsticky2 arm
-//a2 toggle duckspinner
+
+
+//Mrs. Myers approves this code
+
+enum slideState{
+    EXTENDED,
+    RETRACTED,
+    ERROR
+}
+
+enum slideSetting{
+    EXTEND,
+    RETRACT
+}
 @TeleOp
 public class TempTeleop extends OpMode {
     DcMotor motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
-    DcMotorEx arm, slideExtend, slideRotate;
-    Servo servoArm, outtake, grabber;
+    DcMotorEx slideExtend, slideRotate;
+    Servo dispenseRotate, dispensePivot, dispenseGate;
     DcMotor intake;
     CRServo spinner;
-    TouchSensor limitSwitch;
-    double armPower = 0.3;
-    int armPos = 0;
-    double spinPower = 1.0;
+    AnalogInput limitSwitch0 ,limitSwitch1;
+    double spinPower = 1.0, dispenseUp = 1.0, dispenseDown = 0.0, dispenseOpen = 1.0, dispenseClose = 0.0;
     int STORED_EXTEND = 0, LOW_EXTEND = 250, MID_EXTEND = 250, HIGH_EXTEND = 250;
     int STORED_ROTATE = 0, LOW_ROTATE = 100, MID_ROTATE = 100, HIGH_ROTATE = 100;
     int SLIDE_MULTIPLIER = 1;
+    slideState curSlideState = slideState.RETRACTED;
+    slideSetting curSlideSetting = slideSetting.RETRACT;
+    double SLIDE_RETRACT_POWER = -0.6;
+    double SLIDE_EXTEND_POWER = 0.8;
+    int slideTargetPos = 0;
+    ElapsedTime timer = new ElapsedTime();
     @Override
     public void init() {
         motorFrontLeft = hardwareMap.dcMotor.get("TLM10");
@@ -35,24 +49,28 @@ public class TempTeleop extends OpMode {
         motorFrontRight = hardwareMap.dcMotor.get("TRM12");
         motorBackRight = hardwareMap.dcMotor.get("BRM13");
 
-        arm = hardwareMap.get(DcMotorEx.class, "arm20"); //arm
-        servoArm = hardwareMap.get(Servo.class, "servoArm12");
-        outtake = hardwareMap.servo.get("out11");
-        spinner = hardwareMap.crservo.get("blueSpinner");
-        intake = hardwareMap.dcMotor.get("intake23");
-        limitSwitch = hardwareMap.touchSensor.get("limit");
+        spinner = hardwareMap.crservo.get("BSS15");
+        intake = hardwareMap.dcMotor.get("INM23");
+        limitSwitch0 = hardwareMap.get(AnalogInput.class, "LSD20");
+        limitSwitch1 = hardwareMap.get(AnalogInput.class, "LSD21");
+//        limitSwitch0.setMode(DigitalChannel.Mode.INPUT);
+//        limitSwitch1.setMode(DigitalChannel.Mode.INPUT);
+        slideExtend = hardwareMap.get(DcMotorEx.class, "SEM20");
+        slideRotate = hardwareMap.get(DcMotorEx.class, "SRM21");
 
-        slideExtend = hardwareMap.get(DcMotorEx.class, "SEM");
-        slideRotate = hardwareMap.get(DcMotorEx.class, "SRM");
+        dispenseRotate = hardwareMap.get(Servo.class, "DRS11");
+        dispensePivot = hardwareMap.get(Servo.class, "DPS12");
+        dispenseGate = hardwareMap.get(Servo.class, "DGS13");
 
         slideExtend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideExtend.setTargetPosition(0);
         slideExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        slideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideRotate.setTargetPosition(0);
-        slideRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        slideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        slideRotate.setTargetPosition(0);
+//        slideRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        slideExtend.setDirection(DcMotor.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -61,21 +79,47 @@ public class TempTeleop extends OpMode {
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    public void init_loop(){
+        curSlideState = getSlideCurrentState();
+        telemetry.addData("SLIDES ARE:", curSlideState);
     }
     @Override
     public void loop() {
+        //coding at the pool
         intake();
 //        spinCarousel();
         drive();
-        toggle();
-//        arm();
-        servoArm();
-        slides();
+//        toggle();
+//        servoArm();
+//        slides();
+        if(gamepad2.a){
+            curSlideSetting = slideSetting.EXTEND;
+            slideTargetPos = 300;
+        } else if(gamepad2.b){
+            curSlideSetting = slideSetting.EXTEND;
+            slideTargetPos = 600;
+        } else if(gamepad2.x){
+            curSlideSetting = slideSetting.RETRACT;
+            slideTargetPos = 0;
+        }
+        moveSlides();
         telemetry.addData("slideExtend", slideExtend.getCurrentPosition());
-        slideExtend.setPower(0.5);
-        if(limitSwitch.isPressed()){
-            slideExtend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        telemetry.addData("slideRotate", slideRotate.getCurrentPosition());
+        telemetry.addData("dispenserRotate", dispenseRotate.getPosition());
+        telemetry.addData("dispenserPivot", dispensePivot.getPosition());
+        telemetry.addData("dispenseGate", dispenseGate.getPosition());
+        telemetry.addData("slidesRetracted", curSlideState);
+        telemetry.addData("targetPos", slideExtend.getTargetPosition());
+//        telemetry.addData("0", limitSwitch0.getVoltage());
+//        telemetry.addData("1", limitSwitch1.getVoltage());
+//        slideExtend.setPower(0.5);
+//-621 full extend
+        tilt();
+    }
+    public void wait(double waitTime) {
+        timer.reset();
+        while (timer.time() < waitTime) {
         }
     }
     public void drive(){
@@ -87,91 +131,94 @@ public class TempTeleop extends OpMode {
         motorFrontRight.setPower(rightPower);
         motorBackRight.setPower(rightPower);
     }
+    public slideState getSlideCurrentState(){
+        if(limitSwitch0.getVoltage() > 1 && limitSwitch1.getVoltage() < 1){
+            return slideState.EXTENDED;
+        } else if(limitSwitch0.getVoltage() < 1 && limitSwitch1.getVoltage() > 1){
+            return slideState.RETRACTED;
+        } else {
+            telemetry.addLine("LIMIT SWITCH DISCONNECTED");
+            return slideState.ERROR;
+        }
+    }
+
+    public void moveSlides(){
+        curSlideState = getSlideCurrentState();
+        if(curSlideState == slideState.RETRACTED && slideExtend.getCurrentPosition() != 0){
+            slideExtend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slideExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        if(curSlideSetting == slideSetting.RETRACT && curSlideState != slideState.RETRACTED) {
+            slideExtend.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            slideExtend.setPower(SLIDE_RETRACT_POWER);
+        } else if(curSlideSetting == slideSetting.EXTEND){
+            slideExtend.setTargetPosition(slideTargetPos);
+            slideExtend.setPower(SLIDE_EXTEND_POWER);
+            slideExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        } else{
+            slideExtend.setPower(0);
+        }
+    }
+    public void tilt(){
+        slideRotate.setPower(gamepad2.left_stick_y);
+    }
     public void intake() {
-        if(gamepad2.x){
+        if(gamepad2.right_bumper && curSlideState == slideState.RETRACTED){
             intake.setPower(1.0);
-        } else if(gamepad2.y){
+        } else if(gamepad2.left_bumper){
             intake.setPower(1.0);
         } else{
             intake.setPower(0.0);
         }
     }
-    public void servoArm(){
-        if(rb2Toggled){
-            servoArm.setPosition(0.8);
-        } else{
-            servoArm.setPosition(0.2);
-        }
-    }
-    public void arm(){
-//        arm.setPower(armPower);
-//        arm.setTargetPosition(armPos);
-//        if(armPos >= 0 && armPos<=200){
-//            if(gamepad1.dpad_up){
-//                armPos += 2;
-//                arm.setTargetPosition(armPos);
-//            } else if(gamepad1.dpad_down){
-//                armPos-=2;
-//                arm.setTargetPosition(armPos);
-//            }
-//        } else if(armPos < 0){
-//            armPos = 0;
-//            arm.setTargetPosition(armPos);
-//        } else {
-//            armPos = 200;
-//            arm.setTargetPosition(armPos);
-//        }
-////        if(Toggle.yToggled){
-////            grabber.setPosition(1.0);
-////        } else{
-////            grabber.setPosition(0.0);
-//        }
-        if(b2Toggled){
-            outtake.setPosition(0.4);
-        } else{
-            outtake.setPosition(0.0);
-        }
 
-            arm.setPower(gamepad2.right_stick_y * 0.5);
-    }
     public void spinCarousel() {
-//        if (aToggled) {
-//            spinner.setPower(spinPower);
-//        } else {
-//            spinner.setPower(0.0);
-//        }
-        if(a2Toggled){
+        if(a2Toggled) {
             spinner.setPower(spinPower);
-        } else if(aToggled){
-            spinner.setPower(-spinPower);
-        } else{
+        } //TODO: else if something set to -spinPower (for other side carousel)
+        else{
             spinner.setPower(0.0);
         }
     }
     public void slides() {
-        if(a2Toggled){
-            int targetExtend = slideExtend.getTargetPosition();
-            int targetRotate = slideRotate.getTargetPosition();
-            targetExtend+=(int)gamepad2.right_stick_y * SLIDE_MULTIPLIER;
-            targetRotate+=(int)gamepad2.left_stick_y * SLIDE_MULTIPLIER;
-            slideRotate.setTargetPosition(targetExtend);
-            slideExtend.setTargetPosition(targetRotate);
-        } else{
-            if(dpadDown2Toggled){
-                slideExtend.setTargetPosition(LOW_EXTEND);
-                dpadUp2Toggled = false;
-                dpadRight2Toggled = false;
-            } else if(dpadRight2Toggled){
-                slideExtend.setTargetPosition(MID_EXTEND);
-                dpadUp2Toggled = false;
-                dpadDown2Toggled = false;
-            } else if(dpadUp2Toggled){
-                slideExtend.setTargetPosition(HIGH_EXTEND);
-                dpadDown2Toggled = false;
-                dpadRight2Toggled = false;
+        int targetExtend = slideExtend.getTargetPosition();
+        int targetRotate = slideRotate.getTargetPosition();
+        targetExtend+=(int)gamepad2.right_stick_y * SLIDE_MULTIPLIER;
+        targetRotate+=(int)gamepad2.left_stick_y * SLIDE_MULTIPLIER;
+        slideRotate.setTargetPosition(targetExtend);
+        slideExtend.setTargetPosition(targetRotate);
+        if(dpadDown2Toggled){
+            slideExtend.setTargetPosition(LOW_EXTEND);
+            dpadUp2Toggled = false;
+            dpadRight2Toggled = false;
+        } else if(dpadRight2Toggled){
+            slideExtend.setTargetPosition(MID_EXTEND);
+            dpadUp2Toggled = false;
+            dpadDown2Toggled = false;
+        } else if(dpadUp2Toggled){
+            slideExtend.setTargetPosition(HIGH_EXTEND);
+            dpadDown2Toggled = false;
+            dpadRight2Toggled = false;
+        } else {
+            dispenseRotate.setPosition(dispenseDown);
+            wait(1.0);
+            slideExtend.setTargetPosition(STORED_EXTEND);
+            dpadDown2Toggled = false;
+            dpadRight2Toggled = false;
+            dpadUp2Toggled = false;
+        }
+        if(slideExtend.getTargetPosition() > 100){ //notInsideBot
+            if(aToggled){
+                dispenseRotate.setPosition(dispenseUp);
+                wait(0.5);
+                dispenseGate.setPosition(dispenseOpen);
+            } else {
+                dispenseRotate.setPosition(dispenseDown);
+            }
+        } else {
+            if(aToggled){aToggled = false;}
             }
         }
-    }
     boolean oldA = false;
     boolean aToggled = false;
     boolean oldA2 = false;

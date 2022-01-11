@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode.auton;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -7,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.util.Toggle;
 
 @Autonomous
 public class FirstMeetAuto extends LinearOpMode {
@@ -17,10 +17,11 @@ public class FirstMeetAuto extends LinearOpMode {
     Servo servoArm, outtake;
     DcMotor intake;
     Servo grabber;
-    CRServo spinner;
+    CRServo spinner, carousel;
     double armPower = 0.1;
-    int armPos = 0;
+    int armPos = 0, counter = 0;
     double spinPower = 0.5;
+    static double CAROUSEL_POWER = 1.0;
 
     ElapsedTime timer = new ElapsedTime();
     public void wait(double waitTime) {
@@ -54,6 +55,8 @@ public class FirstMeetAuto extends LinearOpMode {
         servoArm = hardwareMap.get(Servo.class, "servoArm12");
 //        grabber = hardwareMap.servo.get("grabber");
         outtake = hardwareMap.servo.get("out11");
+//        carousel = hardwareMap.get(CRServo.class, "BSS15");
+        carousel = hardwareMap.crservo.get("BSS15");
         spinner = hardwareMap.crservo.get("blueSpinner");
         intake = hardwareMap.dcMotor.get("intake23");
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -67,13 +70,31 @@ public class FirstMeetAuto extends LinearOpMode {
         waitForStart();
 
         drive(0.4,0.4,0.8);
+//        telemetry.addData("motorFrontLeft", motorFrontLeft);
+//        telemetry.addData("motorBackLeft", motorBackLeft);
+//        telemetry.addData("motorFrontRight", motorFrontRight);
+//        telemetry.addData("motorBackRight", motorBackRight);
+
         servoArm.setPosition(0.25);
         wait(3.0);
         servoArm.setPosition(0.0);
-//        drive(-1.0,1.0,0.3);
-//
-//        drive(0.8,0.8,2.0); //Park in warehouse
-//        servoArm.setPosition(0.0);
+//        while (counter < 6) {
+//            carousel();
+//            counter++;
+//        }
 
+        drive(-1.0,1.0,0.3);
+        drive(0.8,0.8,2.0); //Park in warehouse
+        servoArm.setPosition(0.0);
+
+    }
+
+
+
+    public void carousel() {
+        carousel.setPower(CAROUSEL_POWER);
+        wait(3.0);
+        carousel.setPower(0.0);
+        wait(1.0);
     }
 }

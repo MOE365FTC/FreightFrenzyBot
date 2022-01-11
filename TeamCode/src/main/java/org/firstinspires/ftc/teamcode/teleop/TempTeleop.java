@@ -25,6 +25,12 @@ enum slideSetting{
     RETRACT,
     MANUAL_OVERRIDE
 }
+
+enum dispenserPivot{
+    LEFT,
+    CENTER,
+    RIGHT
+}
 @TeleOp
 public class TempTeleop extends OpMode {
     DcMotor motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
@@ -34,14 +40,20 @@ public class TempTeleop extends OpMode {
     CRServo spinner;
     AnalogInput limitSwitch0 ,limitSwitch1;
     double spinPower = 1.0;
-    final int SLIDE_MULTIPLIER = 1;
     slideState curSlideState = slideState.RETRACTED;
     slideSetting curSlideSetting = slideSetting.RETRACT;
-    final double SLIDE_RETRACT_POWER = -0.3, SLIDE_EXTEND_POWER = 0.8;
+    dispenserPivot curDispenserState = dispenserPivot.CENTER;
+    final double SLIDE_RETRACT_POWER = -0.6, SLIDE_EXTEND_POWER = 0.8;
     int slideTargetPos = 0;
-    final int tiltTicsFor90degrees = 1453; //Number of tics for 90 degrees of slide rotation (influences dispenser tilt)
+    final double tiltTicsFor90degrees = 1453.0; //Number of tics for 90 degrees of slide rotation (influences dispenser tilt)
     final int extendMinimum = 100; //Min slide extension tics before tilting dispenser or opening gate (must be above motor to prevent damage) (used for tilt and gate)
-    final double tiltMinimum = 0.35/2; //Min dispenser tilt servo position before pivoting servo (must not turn into the slides) (used for pivot)
+    final double tiltMinimum = 0.1012; //Min dispenser tilt servo position before pivoting servo (must not turn into the slides) (used for pivot)
+    final double slideTiltScale = 0.75;
+    //865 max rotation tics (if 0 is vertical)
+    final double slideTiltMax = tiltTicsFor90degrees*slideTiltScale;
+    final double slideTiltMin = 377; //amount of tics for slides to be vertical relative to tilted starting position
+    final double driveSpeed = 0.4;
+    final double rotateTicsDeltaToVertical = 340.0;
     ElapsedTime timer = new ElapsedTime();
     @Override
     public void init() {
@@ -65,6 +77,9 @@ public class TempTeleop extends OpMode {
         slideExtend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideExtend.setTargetPosition(0);
         slideExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        slideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 //        slideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        slideRotate.setTargetPosition(0);
@@ -95,9 +110,11 @@ public class TempTeleop extends OpMode {
         slideControl();
         moveSlides();
         dispenser();
+        telemetry.addData("TILT", (slideRotate.getCurrentPosition() / tiltTicsFor90degrees) * .35);
+        telemetry.addData("rotateTarget", dispenseTilt.getPosition());
         telemetry.addData("slideExtend", slideExtend.getCurrentPosition());
         telemetry.addData("slideRotate", slideRotate.getCurrentPosition());
-        telemetry.addData("dispenserRotate", dispenseTilt.getPosition());
+        telemetry.addData("dispenserTilt", dispenseTilt.getPosition());
         telemetry.addData("dispenserPivot", dispensePivot.getPosition());
         telemetry.addData("dispenseGate", dispenseGate.getPosition());
         telemetry.addData("slidesRetracted", curSlideState);
@@ -111,7 +128,7 @@ public class TempTeleop extends OpMode {
         }
     }
     public void drive(){
-        double scaleFactor = 0.8;
+        double scaleFactor = driveSpeed + gamepad1.left_trigger * (1-driveSpeed);
         double leftPower = -gamepad1.left_stick_y * scaleFactor;
         double rightPower = -gamepad1.right_stick_y * scaleFactor;
         motorFrontLeft.setPower(leftPower);
@@ -122,10 +139,10 @@ public class TempTeleop extends OpMode {
     public void slideControl(){
         if(gamepad2.a){
             curSlideSetting = slideSetting.EXTEND;
-            slideTargetPos = 300;
-        } else if(gamepad2.b){
+            slideTargetPos = 790;
+        } else if(gamepad2.b) {
             curSlideSetting = slideSetting.EXTEND;
-            slideTargetPos = 600;
+            slideTargetPos = 1580;
         } else if(gamepad2.x){
             curSlideSetting = slideSetting.RETRACT;
             slideTargetPos = 0;
@@ -142,7 +159,7 @@ public class TempTeleop extends OpMode {
         }
     }
 
-    public void moveSlides(){
+    public void moveSlides() {
         curSlideState = getSlideCurrentState();
         if(curSlideState == slideState.RETRACTED && slideExtend.getCurrentPosition() != 0 && curSlideSetting != slideSetting.MANUAL_OVERRIDE){
             slideExtend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -163,12 +180,19 @@ public class TempTeleop extends OpMode {
         }
     }
     public void slideTilt(){
-        slideRotate.setPower(gamepad2.left_stick_y);
+        final double slideRotateScalar = 0.3;
+        if(slideRotate.getCurrentPosition() >= slideTiltMax){
+            slideRotate.setPower(-(Math.abs(gamepad2.left_stick_y * slideRotateScalar)));
+        } else if(slideRotate.getCurrentPosition() <= 0){
+            slideRotate.setPower(Math.abs(gamepad2.left_stick_y * slideRotateScalar));
+        } else {
+            slideRotate.setPower(-gamepad2.left_stick_y * slideRotateScalar);
+        }
     }
     public void dispenser(){
         //Tilt:
         if(slideExtend.getCurrentPosition() > extendMinimum && curSlideSetting == slideSetting.EXTEND && curSlideState == slideState.EXTENDED) {
-            dispenseTilt.setPosition((slideRotate.getCurrentPosition() / tiltTicsFor90degrees) * .35);
+            dispenseTilt.setPosition(Math.max(0, ((slideRotate.getCurrentPosition()-rotateTicsDeltaToVertical) / tiltTicsFor90degrees) * .35));
         } else{
             dispenseTilt.setPosition(0.0);
         }
@@ -182,25 +206,33 @@ public class TempTeleop extends OpMode {
         } else {
             dispenseGate.setPosition(1.0);
         }
-        //Pivot:
+        //Pivot Setting:
         if(dispenseTilt.getPosition() > tiltMinimum && slideExtend.getCurrentPosition() > extendMinimum  && curSlideSetting == slideSetting.EXTEND && curSlideState == slideState.EXTENDED){
-            if(dpadLeft2Toggled){
-                dispensePivot.setPosition(0.8);
-                dpadRight2Toggled = false;
-                dpadUp2Toggled = false;
-            } else if(dpadUp2Toggled){
-                dispensePivot.setPosition(0.0);
-                dpadRight2Toggled = false;
-                dpadLeft2Toggled = false;
-            } else if(dpadRight2Toggled){
-                dispensePivot.setPosition(0.15);
-                dpadLeft2Toggled = false;
-                dpadUp2Toggled = false;
-            } else {
-                dispensePivot.setPosition(0.0);
+            if(gamepad2.dpad_up){
+                curDispenserState = dispenserPivot.CENTER;
+            } else if(gamepad2.dpad_left){
+                curDispenserState = dispenserPivot.LEFT;
+            } else if(gamepad2.dpad_right){
+                curDispenserState = dispenserPivot.RIGHT;
             }
+            pivotDispenser();
         } else {
-            dispensePivot.setPosition(0.0);
+            dispensePivot.setPosition(0.48);
+            curDispenserState = dispenserPivot.CENTER;
+        }
+        if(gamepad2.left_trigger >= 1.0){
+            slideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slideRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
+    }
+    public void pivotDispenser(){
+        if(curDispenserState == dispenserPivot.CENTER){
+            dispensePivot.setPosition(0.48);
+        } else if(curDispenserState == dispenserPivot.LEFT){
+            dispensePivot.setPosition(0.8);
+        } else if(curDispenserState == dispenserPivot.RIGHT){
+            dispensePivot.setPosition(0.15);
         }
     }
     public void intake() {
@@ -216,7 +248,7 @@ public class TempTeleop extends OpMode {
         if(gamepad1.dpad_left) {
             spinner.setPower(spinPower);
         } else if(gamepad1.dpad_right){
-            spinner.setPower(spinPower);
+            spinner.setPower(-spinPower);
         } else{
             spinner.setPower(0.0);
         }
@@ -274,9 +306,8 @@ public class TempTeleop extends OpMode {
 }
 //code to survive
 /*
-Coding by Jonas Ho inspired by Ms. Myers
+Coding by Jonas Ho
 
-To learn code you must
 
 
  */

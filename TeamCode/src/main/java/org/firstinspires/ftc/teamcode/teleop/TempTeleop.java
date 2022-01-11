@@ -173,6 +173,7 @@ public class TempTeleop extends OpMode {
             dispenseTilt.setPosition(0.0);
         }
         //Gate:
+        //TODO: Make resting gate position slightly forward so balls don't get stuck
         if(slideExtend.getCurrentPosition() > extendMinimum && curSlideSetting == slideSetting.EXTEND && curSlideState == slideState.EXTENDED) {
             if(gamepad2.left_bumper){
                 dispenseGate.setPosition(0.45);

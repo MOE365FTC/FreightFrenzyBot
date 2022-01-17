@@ -1,16 +1,15 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.teleop.TeamMarkerTracker;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import java.util.ArrayList;
-
+@Disabled
 @TeleOp
 public class OutputtingTeamMarkerPos extends OpMode {
     WebcamName webcamName;
@@ -32,7 +31,7 @@ public class OutputtingTeamMarkerPos extends OpMode {
     @Override
     public void loop() {
         telemetry.addData("position", "somethign");
-        telemetry.addData("counter", tracker.coutner);
+        telemetry.addData("counter", tracker.counter);
         telemetry.addData("chalnes", tracker.channels);
         telemetry.addData("area", tracker.area);
         telemetry.addData("xpos", tracker.xpos);

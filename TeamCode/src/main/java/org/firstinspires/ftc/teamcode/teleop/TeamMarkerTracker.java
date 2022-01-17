@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleop;
-import org.firstinspires.ftc.teamcode.classes.enums.TSEPos;
+import org.firstinspires.ftc.teamcode.enums.TSEPos;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;

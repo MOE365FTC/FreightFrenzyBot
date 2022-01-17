@@ -2,29 +2,14 @@ package org.firstinspires.ftc.teamcode.auton;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.classes.Chassis;
-import org.firstinspires.ftc.teamcode.classes.MOEBot;
-import org.firstinspires.ftc.teamcode.classes.enums.SlideState;
-import org.firstinspires.ftc.teamcode.classes.enums.TSEPos;
-import org.firstinspires.ftc.teamcode.classes.enums.TurnDirection;
-import org.firstinspires.ftc.teamcode.teleop.TeamMarkerTracker;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-
-import java.io.LineNumberReader;
-
+import org.firstinspires.ftc.teamcode.hardware.MOEBot;
+import org.firstinspires.ftc.teamcode.enums.TSEPos;
+import org.firstinspires.ftc.teamcode.enums.TurnDirection;
 
 
 @Autonomous
-public class BlueTopAuton extends LinearOpMode {
-
+public class BlueWarehouseAuton extends LinearOpMode {
     MOEBot robot;
     final int HEADING_OFFSET = 270;
     public void runOpMode() {
@@ -43,7 +28,6 @@ public class BlueTopAuton extends LinearOpMode {
 //        imu.initialize(parameters);
 //        telemetry.addData("STATUS", "Ready!");
 //        telemetry.update();
-
 
         waitForStart();
         TSEPos curCase = robot.TSETracker.getPosition();

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.classes.enums;
+package org.firstinspires.ftc.teamcode.enums;
 
 public enum DispenserPivot {
     LEFT,

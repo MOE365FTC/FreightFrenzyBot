@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -10,14 +11,17 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.classes.enums.*;
+import org.firstinspires.ftc.teamcode.enums.DispenserPivot;
+import org.firstinspires.ftc.teamcode.enums.SlideSetting;
+import org.firstinspires.ftc.teamcode.enums.SlideState;
+import org.firstinspires.ftc.teamcode.hardware.enums.*;
 /*
 
     Mrs. Myers approves this code
 
 */
 
-
+@Disabled
 @TeleOp
 public class TempTeleop extends OpMode {
     DcMotor motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;

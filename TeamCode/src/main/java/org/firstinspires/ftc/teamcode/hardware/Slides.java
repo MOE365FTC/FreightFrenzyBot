@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.classes;
+package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.classes.enums.SlideSetting;
-import org.firstinspires.ftc.teamcode.classes.enums.SlideState;
+import org.firstinspires.ftc.teamcode.enums.SlideSetting;
+import org.firstinspires.ftc.teamcode.enums.SlideState;
 
 public class Slides {
     AnalogInput limitSwitch0 ,limitSwitch1;

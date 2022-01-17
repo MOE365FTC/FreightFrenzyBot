@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.test;
 
 //import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.teleop.MOEOpMode;
 
 
 //@Config
+@Disabled
 @TeleOp
 public class SlidesTest extends MOEOpMode {
     public static int EXTENSION = 100, ROTATE = 100;

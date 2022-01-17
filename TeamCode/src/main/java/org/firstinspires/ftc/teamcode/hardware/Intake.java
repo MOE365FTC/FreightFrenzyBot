@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.classes;
+package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.classes.enums.SlideState;
+import org.firstinspires.ftc.teamcode.enums.SlideState;
 
 public class Intake {
     Gamepad gamepad2;

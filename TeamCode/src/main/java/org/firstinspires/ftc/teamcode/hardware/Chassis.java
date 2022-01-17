@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.classes;
+package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.classes.enums.TurnDirection;
+import org.firstinspires.ftc.teamcode.enums.TurnDirection;
 
 public class Chassis {
     DcMotor motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;

@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode.classes;
+package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.classes.enums.DispenserPivot;
-import org.firstinspires.ftc.teamcode.classes.enums.SlideSetting;
-import org.firstinspires.ftc.teamcode.classes.enums.SlideState;
+import org.firstinspires.ftc.teamcode.enums.DispenserPivot;
+import org.firstinspires.ftc.teamcode.enums.SlideSetting;
+import org.firstinspires.ftc.teamcode.enums.SlideState;
 
 public class Dispenser {
     Gamepad gamepad2;

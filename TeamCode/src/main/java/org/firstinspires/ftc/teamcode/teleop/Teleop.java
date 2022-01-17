@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 
-import org.firstinspires.ftc.teamcode.classes.*;
+import org.firstinspires.ftc.teamcode.hardware.*;
 /*
 
     Mrs. Myers approves this code

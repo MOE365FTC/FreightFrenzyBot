@@ -24,22 +24,21 @@ public class MotorEncoderTest extends OpMode {
         motorBackLeft = hardwareMap.get(DcMotorEx.class, "BLM11");
         motorBackRight = hardwareMap.get(DcMotorEx.class, "TRM12");
         motorFrontRight = hardwareMap.get(DcMotorEx.class, "BRM13");
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm = hardwareMap.get(DcMotorEx.class, "arm20"); //arm
-        servoArm = hardwareMap.get(Servo.class, "servoArm12");
-        outtake = hardwareMap.servo.get("out11");
-        spinner = hardwareMap.crservo.get("blueSpinner");
-        intake = hardwareMap.dcMotor.get("intake23");
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     @Override

@@ -32,12 +32,20 @@ public class AutonomousTurnTest extends LinearOpMode {
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new BNO055IMU.Parameters().accelerationIntegrationAlgorithm;
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+        telemetry.addData("STATUS", "IMU Initializing...");
+        telemetry.update();
         imu.initialize(parameters);
+        telemetry.addData("STATUS", "Ready!");
+        telemetry.update();
 
         motorFrontLeft = hardwareMap.dcMotor.get("TLM10");
         motorBackLeft = hardwareMap.dcMotor.get("BLM11");
         motorFrontRight = hardwareMap.dcMotor.get("TRM12");
         motorBackRight = hardwareMap.dcMotor.get("BRM13");
+        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         waitForStart();
@@ -46,15 +54,11 @@ public class AutonomousTurnTest extends LinearOpMode {
         // we would have to write our own integrator schema that would reject noise.
         // To just get the heading (what we want) we don't have to integrate the accelerometer; that is read off the Gyro.
 
-        turnToHeading(0, Direction.LEFT, 0.3, 0.4, 5); // left turn to face heading 0 (towards back wall)
-        sleep(5000); //wait 5 seconds
-        turnToHeading(90, Direction.RIGHT, 0.3, 0.4, 5); //right turn to face heading 90 (towards RED alliance)
-        sleep(5000); // wait 5 seconds
-        turnToHeading(180, Direction.LEFT, 0.3, 0.4, 5); // left turn to face heading 180 (towards audience), the 'long way'
+        turnToHeading(0, Direction.RIGHT, 0.3, 3); // left turn to face heading 0 (towards back wall)
 
     }
 
-    public void turnToHeading(double targetHeading, Direction dir, double minPower, double maxPower, double tolerance){
+    public void turnToHeading(double targetHeading, Direction dir, double turnPower, double tolerance){
         //targetHeading: final heading to face
         //dir: Direction to turn
         //minPower: minimum power to turn the robot at
@@ -62,28 +66,36 @@ public class AutonomousTurnTest extends LinearOpMode {
         //tolerance: tolerance (in degrees) to stop the turn at
         double turnScaling = 0.1; //TODO: coefficient to modify the error by, trial and error here
         double imuHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).thirdAngle;
-        double curHeading = imuHeading + HEADING_OFFSET; // this is our 'adjusted' current heading
+        imuHeading = (imuHeading + 360) % 360;
+        double curHeading = (imuHeading + HEADING_OFFSET) % 360; // this is our 'adjusted' current heading
         int multiplier = dir == Direction.RIGHT ? 1 : -1; // multiply powers by 1 if RIGHT, -1 if LEFT to get the turn direction
         double error = Math.abs(curHeading - targetHeading);
-        double turnPower = clamp(error * turnScaling, minPower, maxPower); // get a power to turn at, won't ever go below min or over max power
+        motorFrontRight.setPower(-multiplier * turnPower);
+        motorBackRight.setPower(-multiplier * turnPower);
+        motorFrontLeft.setPower(multiplier * turnPower);
+        motorBackLeft.setPower(multiplier * turnPower);
         while(error > tolerance && opModeIsActive()){ // ALWAYS put an opModeIsActive() check in all FTC while loops!!!
             imuHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            curHeading = imuHeading + HEADING_OFFSET;
+            imuHeading = (imuHeading + 360) % 360;
+            curHeading = (imuHeading + HEADING_OFFSET) % 360;
             error = Math.abs(curHeading - targetHeading);
-            turnPower = clamp(error * turnScaling, minPower, maxPower);
-            motorFrontRight.setPower(multiplier * turnPower);
-            motorBackRight.setPower(multiplier * turnPower);
-            motorFrontLeft.setPower(-1 * multiplier * turnPower);
-            motorBackLeft.setPower(-1 * multiplier * turnPower);
+//            turnPower = clamp(error * turnScaling, minPower, maxPower);
+
 //            sleep(10); // sleep for 10 milliseconds, we can tune this number too.
             telemetry.addData("error", error);
-            telemetry.addData("1", imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-            telemetry.addData("2", imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle);
-            telemetry.addData("3", imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX, AngleUnit.DEGREES).thirdAngle);
             telemetry.update();
         }
-
         stopDrive();
+        while(opModeIsActive()){
+            imuHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            imuHeading = (imuHeading + 360) % 360;
+            curHeading = (imuHeading + HEADING_OFFSET) % 360;
+            telemetry.addData("imuHeading", imuHeading);
+            telemetry.addData("curHeading", curHeading);
+            error = Math.abs(curHeading - targetHeading);
+            telemetry.addData("error", error);
+            telemetry.update();
+        }
 
     }
 

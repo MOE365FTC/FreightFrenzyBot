@@ -9,35 +9,22 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.functions.enums.*;
 /*
 
     Mrs. Myers approves this code
 
 */
-enum slideState{
-    EXTENDED,
-    RETRACTED,
-    ERROR
-}
 
-enum slideSetting{
-    EXTEND,
-    RETRACT,
-    MANUAL_OVERRIDE
-}
 
-enum dispenserPivot{
-    LEFT,
-    CENTER,
-    RIGHT
-}
 @TeleOp
 public class TempTeleop extends OpMode {
     DcMotor motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
     DcMotorEx slideExtend, slideRotate;
     Servo dispenseTilt, dispensePivot, dispenseGate;
     DcMotor intake;
-    CRServo spinner;
+    CRServo spinner1, spinner2;
     AnalogInput limitSwitch0 ,limitSwitch1;
     double spinPower = 1.0;
     slideState curSlideState = slideState.RETRACTED;
@@ -45,15 +32,14 @@ public class TempTeleop extends OpMode {
     dispenserPivot curDispenserState = dispenserPivot.CENTER;
     final double SLIDE_RETRACT_POWER = -0.6, SLIDE_EXTEND_POWER = 0.8;
     int slideTargetPos = 0;
-    final double tiltTicsFor90degrees = 1453.0; //Number of tics for 90 degrees of slide rotation (influences dispenser tilt)
-    final int extendMinimum = 100; //Min slide extension tics before tilting dispenser or opening gate (must be above motor to prevent damage) (used for tilt and gate)
+    final double tiltTicsFor90degrees = 2700; //Number of tics for 90 degrees of slide rotation (influences dispenser tilt)
+    final int extendMinimum = 263; //Min slide extension tics before tilting dispenser or opening gate (must be above motor to prevent damage) (used for tilt and gate)
     final double tiltMinimum = 0.1012; //Min dispenser tilt servo position before pivoting servo (must not turn into the slides) (used for pivot)
-    final double slideTiltScale = 0.75;
+    final double slideTiltScale = 0.85;
     //865 max rotation tics (if 0 is vertical)
     final double slideTiltMax = tiltTicsFor90degrees*slideTiltScale;
-    final double slideTiltMin = 377; //amount of tics for slides to be vertical relative to tilted starting position
-    final double driveSpeed = 0.4;
-    final double rotateTicsDeltaToVertical = 340.0;
+    final double driveSpeed = 0.6;
+    final double rotateTicsDeltaToVertical = 1180.0;
     ElapsedTime timer = new ElapsedTime();
     @Override
     public void init() {
@@ -62,7 +48,8 @@ public class TempTeleop extends OpMode {
         motorFrontRight = hardwareMap.dcMotor.get("TRM12");
         motorBackRight = hardwareMap.dcMotor.get("BRM13");
 
-        spinner = hardwareMap.crservo.get("BSS15");
+        spinner1 = hardwareMap.crservo.get("RSS15");
+        spinner2 = hardwareMap.crservo.get("BSS14");
         intake = hardwareMap.dcMotor.get("INM23");
         limitSwitch0 = hardwareMap.get(AnalogInput.class, "LSD20");
         limitSwitch1 = hardwareMap.get(AnalogInput.class, "LSD21");
@@ -77,15 +64,10 @@ public class TempTeleop extends OpMode {
         slideExtend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideExtend.setTargetPosition(0);
         slideExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        slideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-//        slideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        slideRotate.setTargetPosition(0);
-//        slideRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         slideExtend.setDirection(DcMotor.Direction.REVERSE);
+        slideRotate.setDirection(DcMotor.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -110,15 +92,17 @@ public class TempTeleop extends OpMode {
         slideControl();
         moveSlides();
         dispenser();
-        telemetry.addData("TILT", (slideRotate.getCurrentPosition() / tiltTicsFor90degrees) * .35);
-        telemetry.addData("rotateTarget", dispenseTilt.getPosition());
-        telemetry.addData("slideExtend", slideExtend.getCurrentPosition());
-        telemetry.addData("slideRotate", slideRotate.getCurrentPosition());
-        telemetry.addData("dispenserTilt", dispenseTilt.getPosition());
-        telemetry.addData("dispenserPivot", dispensePivot.getPosition());
-        telemetry.addData("dispenseGate", dispenseGate.getPosition());
-        telemetry.addData("slidesRetracted", curSlideState);
-        telemetry.addData("targetPos", slideExtend.getTargetPosition());
+        telemetry.addData("rot", slideRotate.getCurrentPosition());
+        telemetry.addData("ext", slideExtend.getCurrentPosition());
+//        telemetry.addData("TILT", (slideRotate.getCurrentPosition() / tiltTicsFor90degrees) * .35);
+//        telemetry.addData("rotateTarget", dispenseTilt.getPosition());
+//        telemetry.addData("slideExtend", slideExtend.getCurrentPosition());
+//        telemetry.addData("slideRotate", slideRotate.getCurrentPosition());
+//        telemetry.addData("dispenserTilt", dispenseTilt.getPosition());
+//        telemetry.addData("dispenserPivot", dispensePivot.getPosition());
+//        telemetry.addData("dispenseGate", dispenseGate.getPosition());
+//        telemetry.addData("slidesRetracted", curSlideState);
+//        telemetry.addData("targetPos", slideExtend.getTargetPosition());
 //621 full extend
         //TODO: coding at the school
     }
@@ -180,7 +164,7 @@ public class TempTeleop extends OpMode {
         }
     }
     public void slideTilt(){
-        final double slideRotateScalar = 0.3;
+        final double slideRotateScalar = 0.6;
         if(slideRotate.getCurrentPosition() >= slideTiltMax){
             slideRotate.setPower(-(Math.abs(gamepad2.left_stick_y * slideRotateScalar)));
         } else if(slideRotate.getCurrentPosition() <= 0){
@@ -197,7 +181,6 @@ public class TempTeleop extends OpMode {
             dispenseTilt.setPosition(0.0);
         }
         //Gate:
-        //TODO: Make resting gate position slightly forward so balls don't get stuck
         if(slideExtend.getCurrentPosition() > extendMinimum && curSlideSetting == slideSetting.EXTEND && curSlideState == slideState.EXTENDED) {
             if(gamepad2.left_bumper){
                 dispenseGate.setPosition(0.45);
@@ -223,7 +206,7 @@ public class TempTeleop extends OpMode {
         }
         if(gamepad2.left_trigger >= 1.0){
             slideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            slideRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            slideRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
     }
@@ -247,11 +230,14 @@ public class TempTeleop extends OpMode {
     }
     public void spinCarousel() {
         if(gamepad1.dpad_left) {
-            spinner.setPower(spinPower);
+            spinner1.setPower(spinPower);
+            spinner2.setPower(spinPower);
         } else if(gamepad1.dpad_right){
-            spinner.setPower(-spinPower);
+            spinner1.setPower(-spinPower);
+            spinner2.setPower(-spinPower);
         } else{
-            spinner.setPower(0.0);
+            spinner1.setPower(0.0);
+            spinner2.setPower(0.0);
         }
     }
     boolean oldA = false;

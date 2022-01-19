@@ -47,7 +47,7 @@ public class Dispenser {
 
     void actuateTilt(){
         if(slides.getCurrentExtension() > slides.extendMinimum && slides.curSlideSetting == SlideSetting.EXTEND && slides.curSlideState == SlideState.EXTENDED) {
-            dispenseTilt.setPosition(Math.max(TILT_FOR_RESET, ((slides.getCurrentExtension()- slides.rotateTicsDeltaToVertical) / slides.tiltTicsFor90degrees) * TILT_FOR_90));
+            dispenseTilt.setPosition(Math.max(TILT_FOR_RESET, ((slides.getCurrentRotation()- slides.rotateTicsDeltaToVertical) / slides.tiltTicsFor90degrees) * TILT_FOR_90));
         } else{
             dispenseTilt.setPosition(TILT_FOR_RESET);
         }

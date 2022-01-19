@@ -14,7 +14,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.enums.DispenserPivot;
 import org.firstinspires.ftc.teamcode.enums.SlideSetting;
 import org.firstinspires.ftc.teamcode.enums.SlideState;
-import org.firstinspires.ftc.teamcode.hardware.enums.*;
 /*
 
     Mrs. Myers approves this code

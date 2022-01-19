@@ -34,7 +34,7 @@ public class OutputtingTeamMarkerPos extends OpMode {
         telemetry.addData("counter", tracker.counter);
         telemetry.addData("chalnes", tracker.channels);
         telemetry.addData("area", tracker.area);
-        telemetry.addData("xpos", tracker.xpos);
-        telemetry.addData("position", tracker.position);
+//        telemetry.addData("xpos", tracker.xpos);
+//        telemetry.addData("position", tracker.position);
     }
 }

@@ -20,6 +20,7 @@ public class Slides {
     public SlideState curSlideState = SlideState.RETRACTED;
     public SlideSetting curSlideSetting = SlideSetting.RETRACT;
     public int slideTargetPos = 0;
+    public double slideTiltInput = 0;
 
     public final double SLIDE_RETRACT_POWER = -0.6;
     public final double SLIDE_EXTEND_POWER = 0.8;
@@ -116,18 +117,32 @@ public class Slides {
     }
 
     void actuateTilt(){
-        final double slideRotateScalar = 0.3;
-        if(slideRotate.getCurrentPosition() >= slideTiltMax){
-            slideRotate.setPower(-(Math.abs(gamepad2.left_stick_y * slideRotateScalar)));
-        } else if(slideRotate.getCurrentPosition() <= 0){
-            slideRotate.setPower(Math.abs(gamepad2.left_stick_y * slideRotateScalar));
-        } else {
-            slideRotate.setPower(-gamepad2.left_stick_y * slideRotateScalar);
-        }
+        //We want GAMEPAD UP (negative value) to make the motor go OUT (negative value)
+        final double slideRotateScalar = -0.5;
+        slideTiltInput = gamepad2.left_stick_y;
+        if(slideRotate.getCurrentPosition() <= 0 && slideTiltInput > 0) // we're all the way back, and trying to go more back
+            slideTiltInput = 0;
+        else if(slideRotate.getCurrentPosition() >= slideTiltMax && slideTiltInput < 0) // we're all the way out and trying to go more out
+            slideTiltInput = 0;
+
+        slideRotate.setPower(slideTiltInput * slideRotateScalar);
+
+        //if we're at 0 && gamepad input is down/positive --> set input to 0
+        //if we're at max && gamepad input is up/negative --> set input to 0
+        //else set input to just gamepad value
+        //set motor to input * scalar
+//        if(slideRotate.getCurrentPosition() >= slideTiltMax){
+//            slideRotate.setPower(Math.abs(gamepad2.left_stick_y * slideRotateScalar));
+//        } else if(slideRotate.getCurrentPosition() <= 0){
+//            slideRotate.setPower(-(Math.abs(gamepad2.left_stick_y * slideRotateScalar)));
+//        } else {
+//            //Up is out
+//            slideRotate.setPower(-gamepad2.left_stick_y * slideRotateScalar);
+//        }
 
         if(gamepad2.left_trigger >= 1.0){
             slideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            slideRotate.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            slideRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
 
@@ -175,5 +190,6 @@ public class Slides {
         telemetry.addData("SLIDE STATUS", curSlideState);
         telemetry.addData("EXT", this.getCurrentExtension());
         telemetry.addData("ROT", this.getCurrentRotation());
+        telemetry.addData("SlideInput", gamepad2.left_stick_y);
     }
 }

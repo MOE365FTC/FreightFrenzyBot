@@ -31,6 +31,16 @@ public class Slides {
     public final double rotateTicsDeltaToVertical = 1180.0;
     final int extendMinimum = 263; //Min slide extension tics before tilting dispenser or opening gate (must be above motor to prevent damage) (used for tilt and gate)
 
+    public final double tiltKp = 0;
+    public final double tiltKi = 0;
+    public final double tiltKd = 0;
+    public final int tiltTolerance = 0;
+    public final double integralCap = 0;
+
+    public final int tiltOut = 2650;
+    public final int tiltReset = 0;
+
+    public PIDController tiltPID;
 
     public Slides(HardwareMap hardwareMap, Gamepad gpad2){
         this.gamepad2 = gpad2;
@@ -50,6 +60,7 @@ public class Slides {
         slideExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        tiltPID = new PIDController(slideRotate, tiltKp, tiltKi, tiltKd, tiltTolerance, integralCap);
         updateState();
     }
 
@@ -65,6 +76,8 @@ public class Slides {
         slideRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         updateState();
+
+        this.tiltPID.setOpMode(opMode);
     }
 
     public void actuate(){
@@ -81,6 +94,7 @@ public class Slides {
         } else if(gamepad2.x){
             curSlideSetting = SlideSetting.RETRACT;
             slideTargetPos = 0;
+            tiltPID.setTarget(tiltReset);
         }
     }
 
@@ -117,33 +131,32 @@ public class Slides {
     }
 
     void actuateTilt(){
-        //We want GAMEPAD UP (negative value) to make the motor go OUT (negative value)
-        final double slideRotateScalar = -0.5;
-        slideTiltInput = gamepad2.left_stick_y;
-        if(slideRotate.getCurrentPosition() <= 0 && slideTiltInput > 0) // we're all the way back, and trying to go more back
-            slideTiltInput = 0;
-        else if(slideRotate.getCurrentPosition() >= slideTiltMax && slideTiltInput < 0) // we're all the way out and trying to go more out
-            slideTiltInput = 0;
-
-        slideRotate.setPower(slideTiltInput * slideRotateScalar);
-
-        //if we're at 0 && gamepad input is down/positive --> set input to 0
-        //if we're at max && gamepad input is up/negative --> set input to 0
-        //else set input to just gamepad value
-        //set motor to input * scalar
-//        if(slideRotate.getCurrentPosition() >= slideTiltMax){
-//            slideRotate.setPower(Math.abs(gamepad2.left_stick_y * slideRotateScalar));
-//        } else if(slideRotate.getCurrentPosition() <= 0){
-//            slideRotate.setPower(-(Math.abs(gamepad2.left_stick_y * slideRotateScalar)));
-//        } else {
-//            //Up is out
-//            slideRotate.setPower(-gamepad2.left_stick_y * slideRotateScalar);
-//        }
+//        //We want GAMEPAD UP (negative value) to make the motor go OUT (negative value)
+//        final double slideRotateScalar = -0.5;
+//        slideTiltInput = gamepad2.left_stick_y;
+//        if(slideRotate.getCurrentPosition() <= 0 && slideTiltInput > 0) // we're all the way back, and trying to go more back
+//            slideTiltInput = 0;
+//        else if(slideRotate.getCurrentPosition() >= slideTiltMax && slideTiltInput < 0) // we're all the way out and trying to go more out
+//            slideTiltInput = 0;
+//
+//        slideRotate.setPower(slideTiltInput * slideRotateScalar);
+        tiltPID.moveTeleop();
 
         if(gamepad2.left_trigger >= 1.0){
             slideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             slideRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
+    }
+
+    public void setTilt(){
+        int target = 0;
+        if(-gamepad2.right_stick_y > 0.5){
+            target = tiltOut;
+        } else if(-gamepad2.right_stick_y < 0.5){
+            target = tiltReset;
+        }
+
+        tiltPID.setTarget(target);
     }
 
     public void autonSlideTilt(double speed, double target, int tolerance){

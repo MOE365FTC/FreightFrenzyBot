@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.enums.SlideSetting;
@@ -31,24 +32,26 @@ public class Slides {
     public final double rotateTicsDeltaToVertical = 1180.0;
     final int extendMinimum = 263; //Min slide extension tics before tilting dispenser or opening gate (must be above motor to prevent damage) (used for tilt and gate)
 
-
     public Slides(HardwareMap hardwareMap, Gamepad gpad2){
         this.gamepad2 = gpad2;
 
-        limitSwitch0 = hardwareMap.get(AnalogInput.class, "LSD20");
-        limitSwitch1 = hardwareMap.get(AnalogInput.class, "LSD21");
+        limitSwitch0 = hardwareMap.get(AnalogInput.class, "LSE10");
+        limitSwitch1 = hardwareMap.get(AnalogInput.class, "LSR11");
 
         slideExtend = hardwareMap.get(DcMotorEx.class, "SEM20");
         slideRotate = hardwareMap.get(DcMotorEx.class, "SRM21");
 
         slideExtend.setTargetPosition(0);
         slideExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        slideRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideRotate.setTargetPosition(0);
+        slideRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         slideExtend.setDirection(DcMotor.Direction.REVERSE);
         slideRotate.setDirection(DcMotor.Direction.REVERSE);
         slideExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slideRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        slideRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         updateState();
     }
@@ -185,11 +188,24 @@ public class Slides {
         }
         slideExtend.setPower(0.0);
     }
+
+
+    public void rotateRunToPosition(int targetPos, double power, double p, double i, double d, double f){
+//        PIDFCoefficients pidf = new PIDFCoefficients(p, i, d, f);
+//            slideRotate.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pidf);
+            slideRotate.setVelocityPIDFCoefficients(p, i, d, f);
+            slideRotate.setTargetPosition(targetPos);
+            slideRotate.setPower(power);
+    }
+
     public void composeTelemetry(Telemetry telemetry){
         telemetry.addLine("--SLIDES--");
         telemetry.addData("SLIDE STATUS", curSlideState);
         telemetry.addData("EXT", this.getCurrentExtension());
         telemetry.addData("ROT", this.getCurrentRotation());
         telemetry.addData("SlideInput", gamepad2.left_stick_y);
+        telemetry.addData("LS1", limitSwitch0.getVoltage());
+        telemetry.addData("LS2", limitSwitch1.getVoltage());
+
     }
 }

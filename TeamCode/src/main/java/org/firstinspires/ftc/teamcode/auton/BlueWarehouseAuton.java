@@ -31,25 +31,27 @@ public class BlueWarehouseAuton extends LinearOpMode {
 
         waitForStart();
         TSEPos curCase = robot.TSETracker.getPosition();
+        curCase = TSEPos.TOP;
         telemetry.addData("xpos", robot.TSETracker.getXPos());
         telemetry.addData("case", curCase);
         telemetry.update();
 
         //Move away from wall and face alliance hub
-        robot.chassis.forward_inches(24, 0.5);
-        robot.chassis.turnToHeading(210.0, TurnDirection.RIGHT, 0.3, 2);
+        robot.chassis.forward_inches(24, 0.8);
+        robot.chassis.turnToHeading(210.0, TurnDirection.RIGHT, 0.8, 2);
 
         switch(curCase) {
             case TOP:
-                robot.chassis.forward_inches(1, 0.3);
-                robot.slides.autonArm(2650, 1580);
+                robot.chassis.forward_inches(1, 0.6);
+//                robot.slides.autonArm(2650, 1580);
+                sleep(1000);
                 while(robot.slides.isBusy() && opModeIsActive()){
                 }
-                robot.dispenser.setTilt(0.144);
-                robot.dispenser.setGateOpen(true);
-                sleep(1000);
-                robot.dispenser.setGateOpen(false);
-                robot.chassis.backward_inches(3, 0.5);
+//                robot.dispenser.setTilt(0.144);
+//                robot.dispenser.setGateOpen(true);
+//                sleep(1000);
+//                robot.dispenser.setGateOpen(false);
+                robot.chassis.backward_inches(1, 0.3);
                 break;
             case MID:
                 robot.chassis.forward_inches(2.5, 0.3);
@@ -76,14 +78,16 @@ public class BlueWarehouseAuton extends LinearOpMode {
             default:
                 break;
         }
-        robot.slides.updateState();
-        robot.dispenser.setTilt(0.0);
-        robot.slides.autonSlideTilt(0.5, robot.slides.rotateTicsDeltaToVertical, 10);
-        robot.slides.retractAndWait();
-        while(robot.slides.isBusy() && opModeIsActive()){
-
-        }
-        robot.chassis.turnToHeading(190.0, TurnDirection.RIGHT, 0.3, 2);
-        robot.chassis.driveSeconds(-0.8, 1.1);
+//        robot.slides.updateState();
+//        robot.dispenser.setTilt(0.0);
+//        robot.slides.autonSlideTilt(0.5, robot.slides.rotateTicsDeltaToVertical, 10);
+//        robot.slides.retractAndWait();
+//        while(robot.slides.isBusy() && opModeIsActive()){
+//
+//        }
+        robot.chassis.turnToHeading(180.0, TurnDirection.RIGHT, 0.8, 2);
+        robot.chassis.setOdometryDown(false);
+        sleep(1000);
+        robot.chassis.driveSeconds(-0.8, 1.2);
     }
 }

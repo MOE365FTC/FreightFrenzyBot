@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp
 public class dispenserTest extends OpMode {
     Servo dispenser;
-    double pos = 0;
+    int pos = 1180;
     boolean rbPress = false;
     boolean lbPress = false;
     @Override

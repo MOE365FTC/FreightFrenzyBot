@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp
 public class MotorEncoderTest extends OpMode {
     DcMotor motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
-
+    boolean aPressed = false;
     @Override
     public void init() {
         motorFrontLeft = hardwareMap.get(DcMotorEx.class, "TLM10");
@@ -42,5 +42,15 @@ public class MotorEncoderTest extends OpMode {
         telemetry.addData("frontRight", motorFrontRight.getCurrentPosition());
         telemetry.addData("backLeft", motorBackLeft.getCurrentPosition());
         telemetry.addData("backRight", motorBackRight.getCurrentPosition());
+
+        if(gamepad1.a && !aPressed){
+            aPressed = true;
+            motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        } else if(aPressed && !gamepad1.a){
+            aPressed = false;
+            motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
     }
 }

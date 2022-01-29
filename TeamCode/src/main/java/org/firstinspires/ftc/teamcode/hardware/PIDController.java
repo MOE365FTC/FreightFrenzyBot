@@ -11,12 +11,15 @@ public class PIDController{
     protected DcMotor motor;
     protected boolean isBusy = false;
     protected int target;
+    protected int oldTarget = 0;
+    protected double lastError = 0;
+    protected double errorSum = 0;
     protected LinearOpMode opMode;
 
     // PID stuff
     protected double kp, ki, kd;
     protected int tolerance;
-    protected double integralCap = 0;
+    protected double integralCap; //If 0 there is no cap
 
     public PIDController(DcMotor motor, double kp, double ki, double kd, int tolerance, double integralCap){
         this.motor = motor;
@@ -24,7 +27,7 @@ public class PIDController{
         this.ki = ki;
         this.kd = kd;
         this.tolerance = tolerance;
-        this.integralCap = 0;
+        this.integralCap = integralCap;
     }
 
     public void setOpMode(LinearOpMode opMode){
@@ -46,16 +49,18 @@ public class PIDController{
     }
 
     public void moveTeleop(){
-        double lastError = 0;
-        double errorSum = 0;
+        if(this.target != this.oldTarget){
+            this.errorSum = 0;
+            this.lastError = 0;
+            this.oldTarget = this.target;
+        }
         double error = this.target - this.motor.getCurrentPosition();
-        this.isBusy = true;
         if(Math.abs(error) > this.tolerance){
             error = this.target - this.motor.getCurrentPosition();
             double power = error * this.kp + errorSum * this.ki + (error - lastError) * this.kd;
             this.motor.setPower(power);
             errorSum += error;
-            if (Math.abs(errorSum) > this.integralCap){
+            if (this.integralCap > 0 && Math.abs(errorSum) > this.integralCap){
                 errorSum = Math.signum(errorSum) * this.integralCap;
             }
             lastError = error;
@@ -82,13 +87,12 @@ class PIDRunnable implements Runnable {
             double power = error * pid.kp + errorSum * pid.ki + (error - lastError) * pid.kd;
             pid.motor.setPower(power);
             errorSum += error;
-            if (Math.abs(errorSum) > pid.integralCap){
+            if (pid.integralCap > 0 && Math.abs(errorSum) > pid.integralCap){
                 errorSum = Math.signum(errorSum) * pid.integralCap;
             }
             lastError = error;
         }
         pid.motor.setPower(0);
         pid.isBusy = false;
-
     }
 }

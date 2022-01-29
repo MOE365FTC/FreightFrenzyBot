@@ -36,7 +36,6 @@ public class Teleop extends OpMode {
         robot.slides.setTilt();
         robot.slides.actuate();
 
-
         //control intake
         robot.intake.actuateIntake();
 

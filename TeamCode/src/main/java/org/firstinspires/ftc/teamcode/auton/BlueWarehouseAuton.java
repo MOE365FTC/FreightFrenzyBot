@@ -43,14 +43,14 @@ public class BlueWarehouseAuton extends LinearOpMode {
         switch(curCase) {
             case TOP:
                 robot.chassis.forward_inches(1, 0.6);
-//                robot.slides.autonArm(2650, 1580);
+                robot.slides.autonArm(2650, 1580);
                 sleep(1000);
                 while(robot.slides.isBusy() && opModeIsActive()){
                 }
-//                robot.dispenser.setTilt(0.144);
-//                robot.dispenser.setGateOpen(true);
-//                sleep(1000);
-//                robot.dispenser.setGateOpen(false);
+                robot.dispenser.setTilt(0.144);
+                robot.dispenser.setGateOpen(true);
+                sleep(1000);
+                robot.dispenser.setGateOpen(false);
                 robot.chassis.backward_inches(1, 0.3);
                 break;
             case MID:
@@ -78,15 +78,15 @@ public class BlueWarehouseAuton extends LinearOpMode {
             default:
                 break;
         }
-//        robot.slides.updateState();
-//        robot.dispenser.setTilt(0.0);
-//        robot.slides.autonSlideTilt(0.5, robot.slides.rotateTicsDeltaToVertical, 10);
-//        robot.slides.retractAndWait();
-//        while(robot.slides.isBusy() && opModeIsActive()){
-//
-//        }
+        robot.slides.updateState();
+        robot.dispenser.setTilt(0.0);
+        robot.slides.autonArm((int) robot.slides.rotateTicsDeltaToVertical, 100);
+
         robot.chassis.turnToHeading(180.0, TurnDirection.RIGHT, 0.8, 2);
         robot.chassis.setOdometryDown(false);
+        while(robot.slides.isBusy() && opModeIsActive()){
+        }
+        robot.slides.retractAndWait(); //ensure we are retracted and turn off motor
         sleep(1000);
         robot.chassis.driveSeconds(-0.8, 1.2);
     }

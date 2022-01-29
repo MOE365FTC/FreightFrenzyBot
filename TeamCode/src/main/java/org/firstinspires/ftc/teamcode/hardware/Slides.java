@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.enums.SlideSetting;
 import org.firstinspires.ftc.teamcode.enums.SlideState;
+
 
 public class Slides {
     AnalogInput limitSwitch0 ,limitSwitch1;
@@ -35,7 +37,7 @@ public class Slides {
     public final double tiltKp = 0;
     public final double tiltKi = 0;
     public final double tiltKd = 0;
-    public final int tiltTolerance = 0;
+    public final int tiltTolerance = 10;
     public final double integralCap = 0;
 
     public final int tiltOut = 2650;
@@ -64,7 +66,8 @@ public class Slides {
         slideExtend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        slideRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        tiltPID = new PIDController(slideRotate, tiltKp, tiltKi, tiltKd, tiltTolerance, integralCap);
+        this.tiltPID = new PIDController(slideRotate, tiltKp, tiltKi, tiltKd, tiltTolerance, integralCap);
+        this.tiltPID.setTarget(this.getCurrentRotation()); //Set slide rotate target to the current position
         updateState();
     }
 
@@ -79,9 +82,10 @@ public class Slides {
         slideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        updateState();
-
         this.tiltPID.setOpMode(opMode);
+        this.tiltPID.setTarget(0);
+
+        updateState();
     }
 
     public void actuate(){
@@ -177,7 +181,9 @@ public class Slides {
     }
 
     public void autonArm(int rotPos, int extPos){
-        this.autonSlideTilt(0.5, rotPos, 10);
+        this.tiltPID.setTarget(rotPos);
+        this.tiltPID.moveAuton();
+//        this.autonSlideTilt(0.5, rotPos, 10);
         slideExtend.setTargetPosition(extPos);
         slideExtend.setPower(0.8);
     }
@@ -191,7 +197,7 @@ public class Slides {
     }
 
     public boolean isBusy(){
-        return slideExtend.isBusy() || slideRotate.isBusy();
+        return slideExtend.isBusy() || this.tiltPID.isBusy();
     }
 
     public void retractAndWait(){

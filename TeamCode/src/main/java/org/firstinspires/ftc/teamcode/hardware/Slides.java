@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.enums.SlideSetting;
 import org.firstinspires.ftc.teamcode.enums.SlideState;
 
-
+@Config
 public class Slides {
     AnalogInput limitSwitch0 ,limitSwitch1;
     DcMotorEx slideExtend, slideRotate;
@@ -34,11 +35,11 @@ public class Slides {
     public final double rotateTicsDeltaToVertical = 1180.0;
     final int extendMinimum = 263; //Min slide extension tics before tilting dispenser or opening gate (must be above motor to prevent damage) (used for tilt and gate)
 
-    public final double tiltKp = 0;
-    public final double tiltKi = 0;
-    public final double tiltKd = 0;
-    public final int tiltTolerance = 10;
-    public final double integralCap = 0;
+    public static  double tiltKp = 0;
+    public static  double tiltKi = 0;
+    public static  double tiltKd = 0;
+    public static  int tiltTolerance = 10;
+    public static  double integralCap = 0;
 
     public final int tiltOut = 2650;
     public final int tiltReset = 0;
@@ -48,11 +49,11 @@ public class Slides {
     public Slides(HardwareMap hardwareMap, Gamepad gpad2){
         this.gamepad2 = gpad2;
 
-        limitSwitch0 = hardwareMap.get(AnalogInput.class, "LSE10");
-        limitSwitch1 = hardwareMap.get(AnalogInput.class, "LSR11");
+        limitSwitch0 = hardwareMap.get(AnalogInput.class, "SEA00");
+        limitSwitch1 = hardwareMap.get(AnalogInput.class, "SRA01");
 
-        slideExtend = hardwareMap.get(DcMotorEx.class, "SEM20");
-        slideRotate = hardwareMap.get(DcMotorEx.class, "SRM21");
+        slideExtend = hardwareMap.get(DcMotorEx.class, "SEM03");
+        slideRotate = hardwareMap.get(DcMotorEx.class, "SRM02");
 
         slideExtend.setTargetPosition(0);
         slideExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -209,7 +210,6 @@ public class Slides {
         slideExtend.setPower(0.0);
     }
 
-
     public void rotateRunToPosition(int targetPos, double power, double p, double i, double d, double f){
 //        PIDFCoefficients pidf = new PIDFCoefficients(p, i, d, f);
 //            slideRotate.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pidf);
@@ -219,6 +219,10 @@ public class Slides {
     }
 
     public void composeTelemetry(Telemetry telemetry){
+        telemetry.addData("rot", this.getCurrentRotation());
+        telemetry.addData("target", this.tiltPID.target);
+        telemetry.addData("error", this.tiltPID.lastError);
+        telemetry.addData("power", this.tiltPID.power);
         telemetry.addLine("--SLIDES--");
         telemetry.addData("SLIDE STATUS", curSlideState);
         telemetry.addData("EXT", this.getCurrentExtension());

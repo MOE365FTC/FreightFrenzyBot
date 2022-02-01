@@ -6,26 +6,26 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Carousel {
     Gamepad gamepad1;
-    CRServo spinner1, spinner2;
+    CRServo spinnerRight, spinnerLeft;
 
     final double spinPower = 1.0;
 
     public Carousel(HardwareMap hardwareMap, Gamepad gpad1){
         this.gamepad1 = gpad1;
-        spinner1 = hardwareMap.crservo.get("RSS15");
-        spinner2 = hardwareMap.crservo.get("BSS14");
+        spinnerRight = hardwareMap.crservo.get("CRS00");
+        spinnerLeft = hardwareMap.crservo.get("CLS10");
     }
 
     public void actuate() {
         if(gamepad1.dpad_left) {
-            spinner1.setPower(spinPower);
-            spinner2.setPower(spinPower);
+            spinnerRight.setPower(spinPower);
+            spinnerLeft.setPower(spinPower);
         } else if(gamepad1.dpad_right){
-            spinner1.setPower(-spinPower);
-            spinner2.setPower(-spinPower);
+            spinnerRight.setPower(-spinPower);
+            spinnerLeft.setPower(-spinPower);
         } else{
-            spinner1.setPower(0.0);
-            spinner2.setPower(0.0);
+            spinnerRight.setPower(0.0);
+            spinnerLeft.setPower(0.0);
         }
     }
 }

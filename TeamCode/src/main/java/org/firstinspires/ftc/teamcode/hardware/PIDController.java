@@ -47,7 +47,7 @@ public class PIDController{
         Thread thread = new Thread(run);
         thread.start();
     }
-
+    public double power;
     public void moveTeleop(){
         if(this.target != this.oldTarget){
             this.errorSum = 0;
@@ -57,7 +57,7 @@ public class PIDController{
         double error = this.target - this.motor.getCurrentPosition();
         if(Math.abs(error) > this.tolerance){
             error = this.target - this.motor.getCurrentPosition();
-            double power = error * this.kp + errorSum * this.ki + (error - lastError) * this.kd;
+            power = error * this.kp + errorSum * this.ki + (error - lastError) * this.kd;
             this.motor.setPower(power);
             errorSum += error;
             if (this.integralCap > 0 && Math.abs(errorSum) > this.integralCap){

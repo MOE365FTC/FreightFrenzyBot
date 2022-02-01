@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.hardware.MOEBot;
 public class FreightDetectionTest extends OpMode {
     MOEBot robot;
     ColorSensor color;
+
     @Override
     public void init() {
         robot = new MOEBot(hardwareMap, gamepad1, gamepad2);
@@ -22,8 +23,5 @@ public class FreightDetectionTest extends OpMode {
         telemetry.addData("green", color.green());
         telemetry.addData("blue", color.blue());
     }
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> 3fc57115a836384b731a75b58e3cfa8b59e590a4

@@ -14,7 +14,7 @@ public class Intake {
         this.gamepad2 = gpad2;
         this.slides = slides;
 
-        intake = hardwareMap.dcMotor.get("INM23");
+        intake = hardwareMap.dcMotor.get("INM12");
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 

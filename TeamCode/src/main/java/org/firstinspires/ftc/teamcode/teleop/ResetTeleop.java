@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.hardware.*;
+import org.firstinspires.ftc.teamcode.hardware.MOEBot;
 /*
 
     Mrs. Myers approves this code
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.hardware.*;
 */
 
 @TeleOp
-public class Teleop extends OpMode {
+public class ResetTeleop extends OpMode {
     MOEBot robot;
 
     @Override
@@ -28,30 +29,14 @@ public class Teleop extends OpMode {
     @Override
     public void loop() {
         //TODO: coding at the pool
-        //control drive motors
-        robot.chassis.actuate();
 
         //control slides
         robot.slides.setExtension();
         robot.slides.setTilt();
         robot.slides.actuate();
 
-        //control intake
-        robot.intake.actuateIntake();
-
-        //control dispenser
-        robot.dispenser.setPivot();
-        robot.dispenser.actuate();
-
         //control TSE system
-        robot.tseArm.setArm();
-        robot.tseArm.actuate();
-
-        //control carousel
-        robot.carousel.actuate();
-
-        //imu
-        robot.imu.getAngles();
+        robot.tseArm.resetControl();
 
         //telemetry
 //        robot.slides.composeTelemetry(telemetry);
@@ -64,3 +49,9 @@ public class Teleop extends OpMode {
     }
 }
 //code to survive
+/*
+Coding by Jonas Ho
+
+
+
+ */

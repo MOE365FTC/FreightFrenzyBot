@@ -46,6 +46,7 @@ public class MOEBot {
         slides = new Slides(hardwareMap, gpad2, opMode);
         dispenser = new Dispenser(hardwareMap, gpad2, this.slides);
         intake = new Intake(hardwareMap, gpad2, this.slides, this.dispenser);
+        tseArm = new TSEArm(hardwareMap, gpad1);
         imu = new IMU(hardwareMap, opMode);
 
         TSETracker = new TeamMarkerTracker();

@@ -24,4 +24,16 @@ public class Carousel {
             spinner.setPower(0.0);
         }
     }
+
+    public void startRed(){
+        spinner.setPower(spinPower);
+    }
+
+    public void startBlue(){
+        spinner.setPower(-spinPower);
+    }
+
+    public void stop(){
+        spinner.setPower(0.0);
+    }
 }

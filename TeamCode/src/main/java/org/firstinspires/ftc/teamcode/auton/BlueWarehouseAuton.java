@@ -23,26 +23,41 @@ public class BlueWarehouseAuton extends LinearOpMode {
         telemetry.addData("case", curCase);
         telemetry.update();
 
-        //Move away from wall and face alliance hub
-        robot.chassis.forward_inches(16, 0.6);
-        robot.chassis.turnToHeading(225, TurnDirection.RIGHT, 0.8, 2);
+        robot.tseArm.autonDeploy();
+
+        //Move away from wall
+        robot.chassis.forward_inches(6, 0.4);
 
         switch(curCase) {
             case TOP:
-                robot.chassis.forward_inches(1, 0.6);
-                robot.slides.autonArm(1800, 1580);
+                //TSE GRABBING
+                robot.chassis.turnToHeading(255, TurnDirection.RIGHT, 0.6, 4);
+                sleep(2000); // wait for arm to finish lowering
+                robot.chassis.forward_inches(5, 0.5); // move towards TSE
+                robot.tseArm.autonGrab(); // pick up TSE
+                //PRELOAD SCORING
+                robot.chassis.turnToHeading(225, TurnDirection.RIGHT, 0.8, 4);
+                robot.chassis.forward_inches(6, 0.6); // move towards hub
+                robot.slides.autonArm(1800, 1580); // raise arm
                 sleep(1000);
                 while(robot.slides.isBusy() && opModeIsActive()){
                 }
                 robot.dispenser.setTilt(0.144);
                 sleep(500);
-                robot.dispenser.setGateOpen(true);
+                robot.dispenser.setGateOpen(true); // score
                 sleep(1000);
                 robot.dispenser.setGateOpen(false);
-                robot.chassis.backward_inches(3, 0.3);
+                robot.chassis.backward_inches(3, 0.3); // back away
                 break;
             case MID:
-                robot.chassis.forward_inches(0.5, 0.3);
+                //TSE GRABBING
+                robot.chassis.turnToHeading(275, TurnDirection.LEFT, 0.6, 4); // face TSE
+                sleep(2000);
+                robot.chassis.forward_inches(5, 0.5); // move towards TSE
+                robot.tseArm.autonGrab(); // grab
+                // PRELOAD SCORING
+                robot.chassis.turnToHeading(225, TurnDirection.RIGHT, 0.8, 4); // face hub
+                robot.chassis.forward_inches(7, 0.3);
                 robot.slides.autonArm(2400,900);
                 while(robot.slides.isBusy() && opModeIsActive()){
                 }
@@ -51,10 +66,20 @@ public class BlueWarehouseAuton extends LinearOpMode {
                 robot.dispenser.setGateOpen(true);
                 sleep(1000);
                 robot.dispenser.setGateOpen(false);
-                robot.chassis.backward_inches(2.5, 0.5);
+                robot.chassis.backward_inches(5.5, 0.5);
                 break;
             case BOT:
-                robot.chassis.backward_inches(0.5, 0.5);
+                //TSE GRABBING
+                robot.chassis.turnToHeading(225, TurnDirection.RIGHT, 0.8, 4); // face away from barricade
+                sleep(2000);
+                robot.chassis.forward_inches(2, 0.5); // move away from barricade
+                robot.chassis.turnToHeading(310, TurnDirection.LEFT, 0.8, 4); // face TSE
+                robot.chassis.forward_inches(4, 0.5); // move towards TSE
+                robot.tseArm.autonGrab(); // grab TSE
+                //PRELOAD SCORING
+                robot.chassis.backward_inches(2, 0.5); // back away from barricade
+                robot.chassis.turnToHeading(260, TurnDirection.RIGHT, 0.8, 4); // face hub
+                robot.chassis.forward_inches(2, 0.5); // move towards hub
                 robot.slides.autonArm(2400,780);
                 while(robot.slides.isBusy() && opModeIsActive()){
                 }
@@ -63,7 +88,7 @@ public class BlueWarehouseAuton extends LinearOpMode {
                 robot.dispenser.setGateOpen(true);
                 sleep(1000);
                 robot.dispenser.setGateOpen(false);
-                robot.chassis.backward_inches(1.5, 0.5);
+                robot.chassis.backward_inches(2, 0.5);
                 break;
             default:
                 break;

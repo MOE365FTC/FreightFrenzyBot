@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -26,7 +27,7 @@ public class Dispenser {
     final double TILT_FOR_RESET = 0.0;
 
     //Gate Constants:
-    final double GATE_OPEN = 0.45;
+    final double GATE_OPEN = 0.3;
     final double GATE_CLOSED = 1.0;
 
     //Pivot Constants:
@@ -46,6 +47,7 @@ public class Dispenser {
         dispensePivot = hardwareMap.get(Servo.class, "DYS02");
         dispenseGate = hardwareMap.get(Servo.class, "DGS03");
 //        freightSensor = hardwareMap.get(ColorSensor.class, "freightSensor");
+//        freightSensor.setI2cAddress(I2cAddr.create8bit(0x3C));
         dispensePivot.setPosition(PIVOT_CENTER);
         dispenseGate.setPosition(GATE_CLOSED);
         dispenseTilt.setPosition(TILT_FOR_RESET);
@@ -61,11 +63,11 @@ public class Dispenser {
 //    public boolean hasFreight(){
 //        return this.freightInDispenser;
 //    }
-
+//
 //    private double getFreightSensorSum(){
 //        return freightSensor.red() + freightSensor.green() + freightSensor.blue();
 //    }
-
+//
 //    private boolean checkFreight(){
 //        if (this.getFreightSensorSum() > this.freight_threshold){
 //            return true;

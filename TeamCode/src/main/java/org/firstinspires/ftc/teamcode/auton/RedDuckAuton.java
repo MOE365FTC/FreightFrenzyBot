@@ -24,8 +24,21 @@ public class RedDuckAuton extends LinearOpMode {
         telemetry.addData("case", curCase);
         telemetry.update();
 
-        robot.chassis.forward_inches(12, 0.3);
-        robot.chassis.turnToHeading(60, TurnDirection.LEFT, 0.6, 4);
+        robot.tseArm.autonDeploy();
+        robot.chassis.forward_inches(4, 0.3);
+        switch(curCase){
+            case TOP:
+                robot.chassis.turnToHeading(70, TurnDirection.LEFT, 0.8, 4);
+                break;
+            case MID:
+                break;
+            case BOT:
+                robot.chassis.turnToHeading(110, TurnDirection.RIGHT, 0.8, 4);
+                break;
+        }
+        robot.tseArm.autonGrab();
+        robot.chassis.turnToHeading(50, TurnDirection.LEFT, 0.6, 4);
+        robot.chassis.forward_inches(8, 0.3);
         switch(curCase) {
             case TOP:
                 robot.slides.autonArm(1800, 1580);
@@ -64,10 +77,14 @@ public class RedDuckAuton extends LinearOpMode {
         robot.slides.updateState();
         robot.dispenser.setTilt(0.0);
         robot.slides.autonArm((int) robot.slides.rotateTicsDeltaToVertical + 500, 700);
-        robot.chassis.setOdometryDown(false);
         while(robot.slides.isBusy() && opModeIsActive()){
         }
         robot.slides.retractAndWait(); //ensure we are retracted and turn off motor
+        robot.chassis.turnToHeading(40, TurnDirection.LEFT, 0.6, 4);
+        robot.chassis.backward_inches(22, 0.5);
+        robot.carousel.startRed();
+        sleep(2000);
+        robot.carousel.stop();
     }
 }
 

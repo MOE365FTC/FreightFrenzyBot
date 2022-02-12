@@ -45,7 +45,7 @@ public class Slides {
     public static  double integralCap = 100;
     protected int target = 0;
 
-    public static  int tiltOut = 1800;
+    public static  int tiltOut = 2200;
     public final int tiltReset = 500;
     public static  int sharedHubTilt = 1900;
     public PIDController tiltPID;
@@ -168,14 +168,14 @@ public class Slides {
     }
 
     public void setTilt(){
-        if(-gamepad2.right_stick_y > 0.5) {
+        if(-gamepad2.right_stick_y > 0.75) {
             this.isTiltManual = false;
             target = tiltOut;
         }
-        else if(-gamepad2.right_stick_y < -0.5 && this.curSlideState == SlideState.RETRACTED) {
+        else if(-gamepad2.right_stick_y < -0.75 && this.curSlideState == SlideState.RETRACTED) {
             this.isTiltManual = false;
             target = tiltReset;
-        } else if(gamepad2.left_trigger > 0.5){
+        } else if(gamepad2.left_trigger > 0.9){
             this.isTiltManual = true;
             this.tiltPower = SLIDE_TILT_MANUAL_POWER;
         } else{

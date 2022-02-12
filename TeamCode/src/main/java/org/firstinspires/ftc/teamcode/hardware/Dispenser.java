@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -9,13 +11,15 @@ import org.firstinspires.ftc.teamcode.enums.DispenserPivot;
 import org.firstinspires.ftc.teamcode.enums.SlideSetting;
 import org.firstinspires.ftc.teamcode.enums.SlideState;
 
+@Config
 public class Dispenser {
     Gamepad gamepad2;
     Servo dispenseTilt, dispensePivot, dispenseGate;
+//    ColorSensor freightSensor;
     Slides slides;
 
     DispenserPivot curDispenserState = DispenserPivot.CENTER;
-    final double tiltMinimum = 0.1012; //Min dispenser tilt servo position before pivoting servo (must not turn into the slides) (used for pivot)
+    final static double tiltMinimum = 0.1012; //Min dispenser tilt servo position before pivoting servo (must not turn into the slides) (used for pivot)
 
     //Tilt Constants:
     final double TILT_FOR_90 = 0.35;
@@ -30,20 +34,45 @@ public class Dispenser {
     final double PIVOT_LEFT = 0.8;
     final double PIVOT_RIGHT = 0.15;
 
+    //Freight Detection:
+    final double freight_threshold = 100.0;
+    public boolean freightInDispenser = false;
+
     public Dispenser(HardwareMap hardwareMap, Gamepad gpad2, Slides slides){
         this.gamepad2 = gpad2;
         this.slides = slides;
 
-        dispenseTilt = hardwareMap.get(Servo.class, "DRS11");
-        dispensePivot = hardwareMap.get(Servo.class, "DPS12");
-        dispenseGate = hardwareMap.get(Servo.class, "DGS13");
+        dispenseTilt = hardwareMap.get(Servo.class, "DTS01");
+        dispensePivot = hardwareMap.get(Servo.class, "DYS02");
+        dispenseGate = hardwareMap.get(Servo.class, "DGS03");
+//        freightSensor = hardwareMap.get(ColorSensor.class, "freightSensor");
+        dispensePivot.setPosition(PIVOT_CENTER);
+        dispenseGate.setPosition(GATE_CLOSED);
+        dispenseTilt.setPosition(TILT_FOR_RESET);
     }
 
     public void actuate(){
         actuateTilt();
         actuateGate();
         actuatePivot();
+//        this.freightInDispenser = this.checkFreight();
     }
+
+//    public boolean hasFreight(){
+//        return this.freightInDispenser;
+//    }
+
+//    private double getFreightSensorSum(){
+//        return freightSensor.red() + freightSensor.green() + freightSensor.blue();
+//    }
+
+//    private boolean checkFreight(){
+//        if (this.getFreightSensorSum() > this.freight_threshold){
+//            return true;
+//        } else{
+//            return false;
+//        }
+//    }
 
     void actuateTilt(){
         if(slides.getCurrentExtension() > slides.extendMinimum && slides.curSlideSetting == SlideSetting.EXTEND && slides.curSlideState == SlideState.EXTENDED) {
@@ -105,5 +134,6 @@ public class Dispenser {
         telemetry.addData("TILT", dispenseTilt.getPosition());
         telemetry.addData("PIVOT", dispensePivot.getPosition());
         telemetry.addData("GATE", dispenseGate.getPosition());
+//        telemetry.addData("FREIGHT IN", this.hasFreight());
     }
 }

@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.enums.SlideSetting;
@@ -26,7 +25,7 @@ public class Slides {
     public int slideTargetPos = 0;
     public double slideTiltInput = 0;
 
-    public final double SLIDE_RETRACT_POWER = -0.6;
+    public final double SLIDE_RETRACT_POWER = -0.5;
     public final double SLIDE_EXTEND_POWER = 0.8;
     public final double tiltTicsFor90degrees = 2700.0; //Number of tics for 90 degrees of slide rotation (influences dispenser tilt)
     public final double slideTiltScale = 0.75;
@@ -35,15 +34,20 @@ public class Slides {
     public final double rotateTicsDeltaToVertical = 1180.0;
     final int extendMinimum = 263; //Min slide extension tics before tilting dispenser or opening gate (must be above motor to prevent damage) (used for tilt and gate)
 
-    public static  double tiltKp = 0;
-    public static  double tiltKi = 0;
-    public static  double tiltKd = 0;
-    public static  int tiltTolerance = 10;
-    public static  double integralCap = 0;
+    private boolean isTiltManual = false;
+    private double SLIDE_TILT_MANUAL_POWER = -0.5;
+    private double tiltPower = 0;
 
-    public final int tiltOut = 2650;
-    public final int tiltReset = 0;
+    public static  double tiltKp = 0.002;
+    public static  double tiltKi = 0.00005;
+    public static  double tiltKd = 0.0005;
+    public static  int tiltTolerance = 30;
+    public static  double integralCap = 100;
+    protected int target = 0;
 
+    public static  int tiltOut = 1800;
+    public final int tiltReset = 500;
+    public static  int sharedHubTilt = 1900;
     public PIDController tiltPID;
 
     public Slides(HardwareMap hardwareMap, Gamepad gpad2){
@@ -58,9 +62,10 @@ public class Slides {
         slideExtend.setTargetPosition(0);
         slideExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //        slideRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        slideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideRotate.setTargetPosition(0);
-        slideRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // slideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        slideRotate.setTargetPosition(0);
+//        slideRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         slideExtend.setDirection(DcMotor.Direction.REVERSE);
         slideRotate.setDirection(DcMotor.Direction.REVERSE);
@@ -118,7 +123,7 @@ public class Slides {
         }
     }
 
-     void actuateExtension() {
+    void actuateExtension() {
         updateState();
         if(curSlideState == SlideState.RETRACTED && slideExtend.getCurrentPosition() != 0 && curSlideSetting != SlideSetting.MANUAL_OVERRIDE){
             slideExtend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -149,20 +154,32 @@ public class Slides {
 //            slideTiltInput = 0;
 //
 //        slideRotate.setPower(slideTiltInput * slideRotateScalar);
-        tiltPID.moveTeleop();
+        if(isTiltManual) {
+            this.slideRotate.setPower(tiltPower);
+        }
+        else{
+            tiltPID.moveTeleop();
+        }
 
-        if(gamepad2.left_trigger >= 1.0){
+        if(gamepad2.right_stick_button){
             slideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             slideRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
 
     public void setTilt(){
-        int target = 0;
-        if(-gamepad2.right_stick_y > 0.5){
+        if(-gamepad2.right_stick_y > 0.5) {
+            this.isTiltManual = false;
             target = tiltOut;
-        } else if(-gamepad2.right_stick_y < 0.5){
+        }
+        else if(-gamepad2.right_stick_y < -0.5 && this.curSlideState == SlideState.RETRACTED) {
+            this.isTiltManual = false;
             target = tiltReset;
+        } else if(gamepad2.left_trigger > 0.5){
+            this.isTiltManual = true;
+            this.tiltPower = SLIDE_TILT_MANUAL_POWER;
+        } else{
+            this.tiltPower = 0;
         }
 
         tiltPID.setTarget(target);
@@ -219,10 +236,6 @@ public class Slides {
     }
 
     public void composeTelemetry(Telemetry telemetry){
-        telemetry.addData("rot", this.getCurrentRotation());
-        telemetry.addData("target", this.tiltPID.target);
-        telemetry.addData("error", this.tiltPID.lastError);
-        telemetry.addData("power", this.tiltPID.power);
         telemetry.addLine("--SLIDES--");
         telemetry.addData("SLIDE STATUS", curSlideState);
         telemetry.addData("EXT", this.getCurrentExtension());
@@ -230,6 +243,7 @@ public class Slides {
         telemetry.addData("SlideInput", gamepad2.left_stick_y);
         telemetry.addData("LS1", limitSwitch0.getVoltage());
         telemetry.addData("LS2", limitSwitch1.getVoltage());
-
+        telemetry.addData("Rotate Power", this.tiltPID.power);
+        telemetry.addData("Tilt Target", this.tiltPID.target);
     }
 }

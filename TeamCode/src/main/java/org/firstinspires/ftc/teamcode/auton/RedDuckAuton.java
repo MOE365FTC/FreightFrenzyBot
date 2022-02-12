@@ -1,35 +1,33 @@
 package org.firstinspires.ftc.teamcode.auton;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.hardware.MOEBot;
 import org.firstinspires.ftc.teamcode.enums.TSEPos;
 import org.firstinspires.ftc.teamcode.enums.TurnDirection;
+import org.firstinspires.ftc.teamcode.hardware.MOEBot;
 
-
+//NO DUCKS YET
 @Autonomous
-public class BlueWarehouseAuton extends LinearOpMode {
+public class RedDuckAuton extends LinearOpMode {
     MOEBot robot;
-    final int HEADING_OFFSET = 270;
-    public void runOpMode() {
+    final int HEADING_OFFSET = 90;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
         robot = new MOEBot(hardwareMap, gamepad1, gamepad2, this, HEADING_OFFSET);
 
         waitForStart();
+
         TSEPos curCase = robot.TSETracker.getPosition();
-//        curCase = TSEPos.TOP;
         telemetry.addData("xpos", robot.TSETracker.getXPos());
         telemetry.addData("case", curCase);
         telemetry.update();
 
-        //Move away from wall and face alliance hub
-        robot.chassis.forward_inches(16, 0.6);
-        robot.chassis.turnToHeading(225, TurnDirection.RIGHT, 0.8, 2);
-
+        robot.chassis.forward_inches(12, 0.3);
+        robot.chassis.turnToHeading(60, TurnDirection.LEFT, 0.6, 4);
         switch(curCase) {
             case TOP:
-                robot.chassis.forward_inches(1, 0.6);
                 robot.slides.autonArm(1800, 1580);
                 sleep(1000);
                 while(robot.slides.isBusy() && opModeIsActive()){
@@ -39,22 +37,18 @@ public class BlueWarehouseAuton extends LinearOpMode {
                 robot.dispenser.setGateOpen(true);
                 sleep(1000);
                 robot.dispenser.setGateOpen(false);
-                robot.chassis.backward_inches(3, 0.3);
                 break;
             case MID:
-                robot.chassis.forward_inches(0.5, 0.3);
-                robot.slides.autonArm(2400,900);
+                robot.slides.autonArm(2000,900);
                 while(robot.slides.isBusy() && opModeIsActive()){
                 }
-                robot.dispenser.setTilt(0.22);
+                robot.dispenser.setTilt(0.2);
                 sleep(500);
                 robot.dispenser.setGateOpen(true);
                 sleep(1000);
                 robot.dispenser.setGateOpen(false);
-                robot.chassis.backward_inches(2.5, 0.5);
                 break;
             case BOT:
-                robot.chassis.backward_inches(0.5, 0.5);
                 robot.slides.autonArm(2400,780);
                 while(robot.slides.isBusy() && opModeIsActive()){
                 }
@@ -63,7 +57,6 @@ public class BlueWarehouseAuton extends LinearOpMode {
                 robot.dispenser.setGateOpen(true);
                 sleep(1000);
                 robot.dispenser.setGateOpen(false);
-                robot.chassis.backward_inches(1.5, 0.5);
                 break;
             default:
                 break;
@@ -71,15 +64,10 @@ public class BlueWarehouseAuton extends LinearOpMode {
         robot.slides.updateState();
         robot.dispenser.setTilt(0.0);
         robot.slides.autonArm((int) robot.slides.rotateTicsDeltaToVertical + 500, 700);
-
-        robot.chassis.turnToHeading(180.0, TurnDirection.RIGHT, 0.8, 2);
         robot.chassis.setOdometryDown(false);
         while(robot.slides.isBusy() && opModeIsActive()){
         }
-        telemetry.addData("ROT", robot.slides.getCurrentRotation());
-        telemetry.update();
         robot.slides.retractAndWait(); //ensure we are retracted and turn off motor
-        sleep(500);
-        robot.chassis.driveSeconds(-0.8, 1.2);
     }
 }
+

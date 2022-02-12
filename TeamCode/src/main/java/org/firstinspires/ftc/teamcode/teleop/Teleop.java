@@ -40,15 +40,25 @@ public class Teleop extends OpMode {
         robot.intake.actuateIntake();
 
         //control dispenser
+        robot.dispenser.setPivot();
         robot.dispenser.actuate();
+
+        //control TSE system
+        robot.tseArm.setArm();
+        robot.tseArm.actuate();
 
         //control carousel
         robot.carousel.actuate();
 
+        //imu
+        robot.imu.getAngles();
+
         //telemetry
         robot.slides.composeTelemetry(telemetry);
         robot.dispenser.composeTelemetry(telemetry);
+        robot.imu.composeTelemetry(telemetry);
         telemetry.update();
+
         //TODO: coding at the school
     }
 }

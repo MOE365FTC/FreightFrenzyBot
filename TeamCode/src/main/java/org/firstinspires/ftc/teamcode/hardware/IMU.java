@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -49,10 +51,16 @@ public class IMU {
         z = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
     }
     public void composeTelemetry(Telemetry telemetry){
+        FtcDashboard dashboard = FtcDashboard.getInstance();
         getAngles();
         telemetry.addData("x", x);
         telemetry.addData("y", y);
         telemetry.addData("z", z);
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.put("x", x);
+        packet.put("y", y);
+        packet.put("z", z);
+        dashboard.sendTelemetryPacket(packet);
         telemetry.update();
     }
 }

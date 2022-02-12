@@ -26,10 +26,10 @@ public class Chassis {
     final int turnTicsPerDegree = 310;
     final double turnSlowPower = 0.2;
 
-    final double odometryLeftUpPos = 0.0;
-    final double odometryLeftDownPos = 1.0;
-    final double odometryRightUpPos = 1.0;
-    final double odometryRightDownPos = 0.0;
+    final double odometryLeftUpPos = 1.0;
+    final double odometryLeftDownPos = 0.0;
+    final double odometryRightUpPos = 0.0;
+    final double odometryRightDownPos = 1.0;
 
     //Teleop constructor (no LinearOpMode reference)
     public Chassis(HardwareMap hardwareMap, Gamepad gpad1){

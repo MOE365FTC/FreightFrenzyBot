@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.checkerframework.checker.index.qual.LTEqLengthOf;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.enums.TSEArmPos;
 import org.firstinspires.ftc.teamcode.teleop.TeamMarkerTracker;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -18,6 +19,7 @@ public class MOEBot {
     public Intake intake;
     public Dispenser dispenser;
     public Carousel carousel;
+    public TSEArm tseArm;
     public IMU imu;
 
     WebcamName webcamName;
@@ -28,9 +30,10 @@ public class MOEBot {
     public MOEBot(HardwareMap hardwareMap, Gamepad gpad1, Gamepad gpad2){
         chassis = new Chassis(hardwareMap, gpad1);
         slides = new Slides(hardwareMap, gpad2);
-        intake = new Intake(hardwareMap, gpad2, this.slides);
         dispenser = new Dispenser(hardwareMap, gpad2, this.slides);
+        intake = new Intake(hardwareMap, gpad2, this.slides, this.dispenser);
         carousel = new Carousel(hardwareMap, gpad1);
+        tseArm = new TSEArm(hardwareMap, gpad1);
         imu = new IMU(hardwareMap);
     }
 
@@ -41,8 +44,8 @@ public class MOEBot {
         opMode.telemetry.update();
         chassis = new Chassis(hardwareMap, gpad1, opMode, headingOffset);
         slides = new Slides(hardwareMap, gpad2, opMode);
-        intake = new Intake(hardwareMap, gpad2, this.slides);
         dispenser = new Dispenser(hardwareMap, gpad2, this.slides);
+        intake = new Intake(hardwareMap, gpad2, this.slides, this.dispenser);
         imu = new IMU(hardwareMap, opMode);
 
         TSETracker = new TeamMarkerTracker();

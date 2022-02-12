@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.test;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.checkerframework.checker.signedness.qual.Constant;
 import org.firstinspires.ftc.teamcode.hardware.MOEBot;
 
-@Config
+@Disabled
 @TeleOp
 public class ArmRotatePIDTuning extends OpMode {
     MOEBot robot;

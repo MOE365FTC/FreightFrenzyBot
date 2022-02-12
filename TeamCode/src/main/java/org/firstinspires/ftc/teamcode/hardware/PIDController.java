@@ -30,6 +30,7 @@ public class PIDController{
         this.integralCap = integralCap;
     }
 
+
     public void setOpMode(LinearOpMode opMode){
         this.opMode = opMode;
     }
@@ -48,25 +49,27 @@ public class PIDController{
         thread.start();
     }
     public double power;
+    public double error;
     public void moveTeleop(){
         if(this.target != this.oldTarget){
             this.errorSum = 0;
             this.lastError = 0;
             this.oldTarget = this.target;
         }
-        double error = this.target - this.motor.getCurrentPosition();
+        error = this.target - this.motor.getCurrentPosition();
         if(Math.abs(error) > this.tolerance){
             error = this.target - this.motor.getCurrentPosition();
             power = error * this.kp + errorSum * this.ki + (error - lastError) * this.kd;
-            this.motor.setPower(power);
             errorSum += error;
             if (this.integralCap > 0 && Math.abs(errorSum) > this.integralCap){
                 errorSum = Math.signum(errorSum) * this.integralCap;
             }
             lastError = error;
         } else {
-            this.motor.setPower(0);
+            power = 0;
         }
+        this.motor.setPower(power);
+
     }
 }
 

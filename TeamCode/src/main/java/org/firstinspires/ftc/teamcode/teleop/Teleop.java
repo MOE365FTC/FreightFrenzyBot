@@ -27,6 +27,7 @@ public class Teleop extends OpMode {
 
     @Override
     public void loop() {
+        final double startTime = System.nanoTime();
         //TODO: coding at the pool
         //control drive motors
         robot.chassis.actuate();
@@ -59,8 +60,9 @@ public class Teleop extends OpMode {
 //        robot.imu.composeTelemetry(telemetry);
         robot.tseArm.composeTelemetry(telemetry);
         telemetry.update();
-
+        telemetry.addData("Loop ms", (System.nanoTime() - startTime) / 1000000.0);
         //TODO: coding at the school
+        //TODO: watch video -> https://www.youtube.com/watch?v=dQw4w9WgXcQ
     }
 }
 //code to survive

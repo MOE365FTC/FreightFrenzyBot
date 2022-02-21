@@ -29,11 +29,13 @@ public class RedWarehouseAuton extends LinearOpMode {
             case TOP:
                 //TSE GRABBING
                 robot.chassis.turnToHeading(135, TurnDirection.LEFT, 0.8, 4); // face away from barricade
-                sleep(2000);
+                while(opModeIsActive() && robot.tseArm.isBusy()){} // wait for arm to finish lowering
                 robot.chassis.forward_inches(4, 0.5); // move away from barricade
                 robot.chassis.turnToHeading(60, TurnDirection.RIGHT, 0.8, 4); // face TSE
                 robot.chassis.forward_inches(3, 0.5); // move towards TSE
-                robot.tseArm.autonGrab(); // grab TSE
+                robot.tseArm.autonGrab();
+                sleep(1000);
+                robot.tseArm.autonLift();// grab TSE
                 //PRELOAD SCORING
                 robot.chassis.backward_inches(2, 0.5); // back away from barricade
                 robot.chassis.turnToHeading(115, TurnDirection.LEFT, 0.8, 4);
@@ -52,9 +54,11 @@ public class RedWarehouseAuton extends LinearOpMode {
             case MID:
                 //TSE GRABBING
                 robot.chassis.turnToHeading(100, TurnDirection.LEFT, 0.6, 4); // face TSE
-                sleep(2000);
+                while(opModeIsActive() && robot.tseArm.isBusy()){} // wait for arm to finish lowering
                 robot.chassis.forward_inches(5, 0.5); // move towards TSE
-                robot.tseArm.autonGrab(); // grab
+                robot.tseArm.autonGrab();
+                sleep(1000);
+                robot.tseArm.autonLift();// grab
                 // PRELOAD SCORING
                 robot.chassis.turnToHeading(135, TurnDirection.LEFT, 0.8, 4); // face hub
                 robot.chassis.forward_inches(10, 0.3);
@@ -71,9 +75,11 @@ public class RedWarehouseAuton extends LinearOpMode {
             case BOT:
                 //TSE GRABBING
                 robot.chassis.turnToHeading(115, TurnDirection.LEFT, 0.8, 4); // face TSE
-                sleep(2000);
+                while(opModeIsActive() && robot.tseArm.isBusy()){} // wait for arm to finish lowering
                 robot.chassis.forward_inches(6, 0.5); // move away from barricade
                 robot.tseArm.autonGrab();
+                sleep(1000);
+                robot.tseArm.autonLift();
                 //PRELOAD SCORING
                 robot.chassis.turnToHeading(125, TurnDirection.LEFT, 0.8, 4); // face hub
                 robot.chassis.forward_inches(6, 0.5); // move towards TSE

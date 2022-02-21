@@ -31,12 +31,15 @@ public class BlueWarehouseAuton extends LinearOpMode {
         switch(curCase) {
             case TOP:
                 //TSE GRABBING
-                robot.chassis.turnToHeading(255, TurnDirection.RIGHT, 0.6, 4);
-                sleep(2000); // wait for arm to finish lowering
-                robot.chassis.forward_inches(5, 0.5); // move towards TSE
-                robot.tseArm.autonGrab(); // pick up TSE
+                robot.chassis.turnToHeading(250, TurnDirection.RIGHT, 0.6, 4);
+                while(opModeIsActive() && robot.tseArm.isBusy()){} // wait for arm to finish lowering
+                robot.chassis.forward_inches(6, 0.5); // move towards TSE
+                robot.tseArm.autonGrab();
+                sleep(1000);
+                robot.tseArm.autonLift();// pick up TSE
+
                 //PRELOAD SCORING
-                robot.chassis.turnToHeading(225, TurnDirection.RIGHT, 0.8, 4);
+                robot.chassis.turnToHeading(230, TurnDirection.RIGHT, 0.8, 4);
                 robot.chassis.forward_inches(6, 0.6); // move towards hub
                 robot.slides.autonArm(1800, 1580); // raise arm
                 sleep(1000);
@@ -52,11 +55,13 @@ public class BlueWarehouseAuton extends LinearOpMode {
             case MID:
                 //TSE GRABBING
                 robot.chassis.turnToHeading(275, TurnDirection.LEFT, 0.6, 4); // face TSE
-                sleep(2000);
+                while(opModeIsActive() && robot.tseArm.isBusy()){} // wait for arm to finish lowering
                 robot.chassis.forward_inches(5, 0.5); // move towards TSE
-                robot.tseArm.autonGrab(); // grab
+                robot.tseArm.autonGrab();
+                sleep(1000);
+                robot.tseArm.autonLift();// grab
                 // PRELOAD SCORING
-                robot.chassis.turnToHeading(225, TurnDirection.RIGHT, 0.8, 4); // face hub
+                robot.chassis.turnToHeading(230, TurnDirection.RIGHT, 0.8, 4); // face hub
                 robot.chassis.forward_inches(7, 0.3);
                 robot.slides.autonArm(2400,900);
                 while(robot.slides.isBusy() && opModeIsActive()){
@@ -71,11 +76,13 @@ public class BlueWarehouseAuton extends LinearOpMode {
             case BOT:
                 //TSE GRABBING
                 robot.chassis.turnToHeading(225, TurnDirection.RIGHT, 0.8, 4); // face away from barricade
-                sleep(2000);
+                while(opModeIsActive() && robot.tseArm.isBusy()){} // wait for arm to finish lowering
                 robot.chassis.forward_inches(2, 0.5); // move away from barricade
                 robot.chassis.turnToHeading(310, TurnDirection.LEFT, 0.8, 4); // face TSE
                 robot.chassis.forward_inches(4, 0.5); // move towards TSE
-                robot.tseArm.autonGrab(); // grab TSE
+                robot.tseArm.autonGrab();
+                sleep(1000);
+                robot.tseArm.autonLift();// grab TSE
                 //PRELOAD SCORING
                 robot.chassis.backward_inches(2, 0.5); // back away from barricade
                 robot.chassis.turnToHeading(260, TurnDirection.RIGHT, 0.8, 4); // face hub

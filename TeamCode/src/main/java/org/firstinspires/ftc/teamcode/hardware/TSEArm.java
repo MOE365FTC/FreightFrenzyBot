@@ -85,9 +85,16 @@ public class TSEArm {
         }
     }
 
+    public boolean isBusy(){
+        return this.arm.isBusy();
+    }
+
     public void autonGrab(){
         this.grabber.setPosition(this.close);
 
+    }
+
+    public void autonLift(){
         this.armSetting = TSEArmPos.RETRACTED;
         this.arm.setTargetPosition(RETRACT_POS);
         this.arm.setPower(this.ARM_POWER);

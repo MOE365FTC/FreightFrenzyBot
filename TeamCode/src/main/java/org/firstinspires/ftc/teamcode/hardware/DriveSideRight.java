@@ -4,31 +4,33 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class DriveSide {
+public class DriveSideRight {
 
-    DcMotor front, back;
+    public DcMotor front, back;
     Servo odoServo;
 
-    float ticsPerInch = 0;
-    float backwardTicsPerInch = 0;
+    double ticsPerInch;
+    double backwardTicsPerInch;
     double odoUpPos;
     double odoDownPos;
 
-    public DriveSide(HardwareMap hardwareMap, String frontMotorName, boolean frontMotorReverse, String backMotorName,
-                     boolean backMotorReverse, String odoServoName, double odoUpPos, double odoDownPos) {
-        this.front = hardwareMap.get(DcMotor.class, frontMotorName);
-        this.back = hardwareMap.get(DcMotor.class, backMotorName);
-        this.odoServo = hardwareMap.get(Servo.class, odoServoName);
+    public DriveSideRight(DcMotor front, DcMotor back, Servo odoServo, boolean frontMotorReverse, boolean backMotorReverse, double odoUpPos, double odoDownPos, double ticsPerInch, double backwardTicsPerInch) {
+        this.front = front;
+        this.back = back;
+        this.odoServo = odoServo;
 
         this.odoUpPos = odoUpPos;
         this.odoDownPos = odoDownPos;
+
+        this.ticsPerInch = ticsPerInch;
+        this.backwardTicsPerInch = backwardTicsPerInch;
 
         this.front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.back.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         if (frontMotorReverse)
             this.front.setDirection(DcMotor.Direction.REVERSE);
         if (backMotorReverse)
-            this.front.setDirection(DcMotor.Direction.REVERSE);
+            this.back.setDirection(DcMotor.Direction.REVERSE);
         this.front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.front.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.back.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -59,4 +61,9 @@ public class DriveSide {
         this.front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.back.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
+    public double getPower(){
+        return this.back.getPower();
+    }
+
 }

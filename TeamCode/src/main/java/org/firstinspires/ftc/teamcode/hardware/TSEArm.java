@@ -44,6 +44,7 @@ public class TSEArm {
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setTargetPosition(RETRACT_POS);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.grabber.setPosition(this.close);
     }
 
     public TSEArm(HardwareMap hardwareMap, Gamepad gpad1, LinearOpMode opMode){

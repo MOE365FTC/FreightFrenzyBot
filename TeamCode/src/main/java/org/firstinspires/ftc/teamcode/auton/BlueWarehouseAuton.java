@@ -39,9 +39,9 @@ public class BlueWarehouseAuton extends LinearOpMode {
         switch(curCase) {
             case TOP:
                 //TSE GRABBING
-                robot.chassis.turn(250, 1);
+                robot.chassis.turn(253, 1);
                 while(opModeIsActive() && robot.tseArm.isBusy()){} // wait for arm to finish lowering
-                robot.chassis.forward_inches(9, 0.5); // move towards TSE
+                robot.chassis.forward_inches(10, 0.5); // move towards TSE
                 robot.tseArm.autonGrab();
                 sleep(1000);
                 robot.tseArm.autonLift();// pick up TSE
@@ -58,7 +58,7 @@ public class BlueWarehouseAuton extends LinearOpMode {
                 robot.dispenser.setGateOpen(true); // score
                 sleep(1000);
                 robot.dispenser.setGateOpen(false);
-                robot.chassis.backward_inches(3, 0.3); // back away
+                robot.chassis.backward_inches(6, 0.3); // back away
                 break;
             case MID:
                 //TSE GRABBING
@@ -86,7 +86,7 @@ public class BlueWarehouseAuton extends LinearOpMode {
                 robot.chassis.turn(225, 1); // face away from barricade
                 while(opModeIsActive() && robot.tseArm.isBusy()){} // wait for arm to finish lowering
                 robot.chassis.forward_inches(6, 0.5); // move away from barricade
-                robot.chassis.turn(315, 1); // face TSE
+                robot.chassis.turn(320, 1); // face TSE
                 robot.chassis.forward_inches(7, 0.5); // move towards TSE
                 robot.tseArm.autonGrab();
                 sleep(1000);
@@ -103,7 +103,7 @@ public class BlueWarehouseAuton extends LinearOpMode {
                 robot.dispenser.setGateOpen(true);
                 sleep(1000);
                 robot.dispenser.setGateOpen(false);
-                robot.chassis.backward_inches(2, 0.5);
+                robot.chassis.backward_inches(3, 0.5);
                 break;
             default:
                 break;

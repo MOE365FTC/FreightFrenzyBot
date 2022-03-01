@@ -58,7 +58,7 @@ public class RedWarehouseAuton extends LinearOpMode {
                 robot.dispenser.setGateOpen(true); // score
                 sleep(1000);
                 robot.dispenser.setGateOpen(false);
-                robot.chassis.backward_inches(8, 0.3); // back away
+                robot.chassis.backward_inches(10, 0.3); // back away
                 break;
             case MID:
                 //TSE GRABBING
@@ -85,7 +85,7 @@ public class RedWarehouseAuton extends LinearOpMode {
                 //TSE GRABBING
                 robot.chassis.turn(110, 1); // face TSE
                 while(opModeIsActive() && robot.tseArm.isBusy()){} // wait for arm to finish lowering
-                robot.chassis.forward_inches(9, 0.5); // move towards TSE
+                robot.chassis.forward_inches(10, 0.5); // move towards TSE
                 robot.tseArm.autonGrab();
                 sleep(1000);
                 robot.tseArm.autonLift();

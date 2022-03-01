@@ -8,7 +8,7 @@ public class Carousel {
     Gamepad gamepad1;
     CRServo spinner;
 
-    final double spinPower = 1.0;
+    double spinPower = 0.25;
 
     public Carousel(HardwareMap hardwareMap, Gamepad gpad1){
         this.gamepad1 = gpad1;
@@ -16,6 +16,11 @@ public class Carousel {
     }
 
     public void actuate() {
+        if(gamepad1.right_bumper){
+            spinPower = 1;
+        } else{
+            spinPower = 0.25;
+        }
         if(gamepad1.dpad_left) {
             spinner.setPower(spinPower);
         } else if(gamepad1.dpad_right){
@@ -26,11 +31,11 @@ public class Carousel {
     }
 
     public void startRed(){
-        spinner.setPower(spinPower);
+        spinner.setPower(-spinPower);
     }
 
     public void startBlue(){
-        spinner.setPower(-spinPower);
+        spinner.setPower(spinPower);
     }
 
     public void stop(){

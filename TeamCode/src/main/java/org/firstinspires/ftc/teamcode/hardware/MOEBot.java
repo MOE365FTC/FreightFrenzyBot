@@ -31,7 +31,7 @@ public class MOEBot {
         chassis = new Chassis(hardwareMap, gpad1);
         slides = new Slides(hardwareMap, gpad2);
         dispenser = new Dispenser(hardwareMap, gpad2, this.slides);
-        intake = new Intake(hardwareMap, gpad2, this.slides, this.dispenser);
+        intake = new Intake(hardwareMap, gpad1, gpad2, this.slides, this.dispenser);
         carousel = new Carousel(hardwareMap, gpad1);
         tseArm = new TSEArm(hardwareMap, gpad1);
         imu = new IMU(hardwareMap);
@@ -45,7 +45,7 @@ public class MOEBot {
         chassis = new Chassis(hardwareMap, gpad1, opMode, headingOffset);
         slides = new Slides(hardwareMap, gpad2, opMode);
         dispenser = new Dispenser(hardwareMap, gpad2, this.slides);
-        intake = new Intake(hardwareMap, gpad2, this.slides, this.dispenser);
+        intake = new Intake(hardwareMap, gpad1, gpad2, this.slides, this.dispenser);
         tseArm = new TSEArm(hardwareMap, gpad1);
         carousel = new Carousel(hardwareMap, gpad1);
         imu = new IMU(hardwareMap, opMode);

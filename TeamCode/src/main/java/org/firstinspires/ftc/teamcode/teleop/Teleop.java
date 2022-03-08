@@ -59,6 +59,7 @@ public class Teleop extends OpMode {
 //        robot.dispenser.composeTelemetry(telemetry);
 //        robot.imu.composeTelemetry(telemetry);
         robot.tseArm.composeTelemetry(telemetry);
+        robot.intake.composeTelemetry(telemetry);
         telemetry.update();
         telemetry.addData("Loop ms", (System.nanoTime() - startTime) / 1000000.0);
         //TODO: coding at the school
